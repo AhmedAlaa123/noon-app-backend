@@ -18,10 +18,10 @@
 
   <ItemGroup>
     <Folder Include="ApplicationDTO\" />
-    <Folder Include="wwwroot\images\CompaniesImages\" />
-    <Folder Include="wwwroot\images\ProductsImages\" />
-    <Folder Include="wwwroot\images\SiteImages\" />
-    <Folder Include="wwwroot\images\subCategoryImages\" />
+    <Folder Include="images\CompaniesImages\" />
+    <Folder Include="images\ProductsImages\" />
+    <Folder Include="images\SiteImages\" />
+    <Folder Include="images\subCategoryImages\" />
   </ItemGroup>
 
 </Project>
