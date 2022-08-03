@@ -2,5 +2,6 @@
 {
     public class AuthenticationReposatory :IAuthenticationReposatory
     {
+
     }
 }
