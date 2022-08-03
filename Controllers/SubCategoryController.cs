@@ -54,21 +54,21 @@ namespace noone.Controllers
         }
         //Add  SupCategories
         [HttpPost]
-        public IActionResult AddSupcategory(SubCategoryCreateDTO createDTO)
+        public IActionResult AddSupcategory( SubCategoryCreateDTO createDTO)
         {
             SubCategory sub = new SubCategory();
             if(ModelState.IsValid)
             {
                 string uploadimg = Path.Combine(env.WebRootPath, "images/subCategoryImages");
-                string uniqe = Guid.NewGuid().ToString() + "_" + createDTO.Image.FileName;
-                string pathfile = Path.Combine(uploadimg, uniqe);
-                using (var filestream = new FileStream(pathfile, FileMode.Create))
-                {
-                    createDTO.Image.CopyTo(filestream);
-                    filestream.Close();
-                }
+                //string uniqe = Guid.NewGuid().ToString() + "_" + createDTO.Image.FileName;
+                //string pathfile = Path.Combine(uploadimg, uniqe);
+                //using (var filestream = new FileStream(pathfile, FileMode.Create))
+                //{
+                //    createDTO.Image.CopyTo(filestream);
+                //    filestream.Close();
+                //}
                 sub.Name = createDTO.Name;
-                sub.Image = uniqe;
+                sub.Image = createDTO.Image;
                 sub.Category_Id = createDTO.Category_Id;
                 reposatory.Insert(sub);
                 string url = Url.Link("GetSupCategoryById", new {id=sub.Id});
@@ -78,6 +78,18 @@ namespace noone.Controllers
             return BadRequest(ModelState);
         }
 
+        
+      
+        [HttpDelete("{id:int}")]
+        public IActionResult DeleteSubCategory(Guid id)
+        {
+            bool isDeleted =reposatory.Delete(id);
+            if (!isDeleted)
+            {
+                return BadRequest("!خطأ..لم يتم حذف البيانات");
+            }
+            return Ok("تم الحذف بنجاح");
+        }
 
 
 
