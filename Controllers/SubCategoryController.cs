@@ -54,12 +54,16 @@ namespace noone.Controllers
         }
         //Add  SupCategories
         [HttpPost]
-        public IActionResult AddSupcategory(SubCategoryCreateDTO createDTO)
+        public IActionResult AddSupcategory( SubCategoryCreateDTO createDTO)
         {
             SubCategory sub = new SubCategory();
             if(ModelState.IsValid)
             {
+
+                string uploadimg = Path.Combine(env.WebRootPath, "images/subCategoryImages");
+
                 //string uploadimg = Path.Combine(env.WebRootPath, "images/subCategoryImages");
+
                 //string uniqe = Guid.NewGuid().ToString() + "_" + createDTO.Image.FileName;
                 //string pathfile = Path.Combine(uploadimg, uniqe);
                 //using (var filestream = new FileStream(pathfile, FileMode.Create))
@@ -68,8 +72,13 @@ namespace noone.Controllers
                 //    filestream.Close();
                 //}
                 sub.Name = createDTO.Name;
+
+                sub.Image = createDTO.Image;
+              //  sub.Category_Id = createDTO.Category_Id;
+
                 sub.Image =createDTO.Image;
               
+
                 reposatory.Insert(sub);
                 string url = Url.Link("GetSupCategoryById",new {id=sub.Id});
                 return Created(url,sub);
@@ -78,30 +87,41 @@ namespace noone.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpPut]
-        public IActionResult Update([FromRoute] Guid id, [FromBody] SubCategory newsub)
-        {
-            if (ModelState.IsValid)
-            {
-                bool isUpdate = reposatory.Update(id, newsub);
-                if (!isUpdate)
-                    return BadRequest("لم يتم تحديث البيانات يرجي اعادة المحاولة ");
 
-            }
-            return Ok("تم تديث البيانات بنجاح");
-
-        }
-
-        [HttpDelete("{id:int}")]
+        
+      
+        [HttpDelete("{id}")]
         public IActionResult DeleteSubCategory(Guid id)
         {
-            bool isDeleted = reposatory.Delete(id);
+            bool isDeleted =reposatory.Delete(id);
             if (!isDeleted)
             {
                 return BadRequest("!خطأ..لم يتم حذف البيانات");
             }
             return Ok("تم الحذف بنجاح");
         }
+
+        [HttpPut("{ID}")]
+        public IActionResult Update([FromRoute]Guid ID ,SubCategoryInfoDTO createDTO)
+        {
+            if (ModelState.IsValid)
+            {
+                SubCategory subCategoryy = new SubCategory()
+                {
+                    Name=createDTO.SubCategoryName,
+                    Image=createDTO.SubCategoryImage
+                };
+
+                bool isUpdate = reposatory.Update(ID,subCategoryy);
+                if (!isUpdate)
+                    return BadRequest("لم يتم تحديث البيانات يرجي اعادة المحاولة ");
+
+
+            }
+            return Ok("تم تديث البيانات بنجاح");
+
+        }
+
 
 
     }

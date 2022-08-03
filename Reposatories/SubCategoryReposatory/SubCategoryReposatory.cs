@@ -74,8 +74,7 @@ namespace noone.Reposatories.SubCategoryReposatory
             {
                 Oldone.Name = subCategory.Name;
                 Oldone.Image = subCategory.Image;
-                Oldone.Category_Id = subCategory.Category_Id;
-                Oldone.Products = subCategory.Products;
+                this.noonEntities.SaveChanges();
             }
             catch (Exception ex)
             {
