@@ -12,7 +12,7 @@ using noone.Models;
 namespace noone.Migrations
 {
     [DbContext(typeof(NoonEntities))]
-    [Migration("20220803103710_init2")]
+    [Migration("20220803172550_init2")]
     partial class init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -465,7 +465,7 @@ namespace noone.Migrations
 
             modelBuilder.Entity("noone.Models.SubCategory", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 

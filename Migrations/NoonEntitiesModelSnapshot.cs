@@ -463,7 +463,7 @@ namespace noone.Migrations
 
             modelBuilder.Entity("noone.Models.SubCategory", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
