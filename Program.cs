@@ -1,5 +1,13 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using noone.Helpers;
 using noone.Models;
+using noone.Reposatories;
+using noone.Reposatories.AuthenticationReposatory;
+
+using System.Text;
 
 namespace noone
 {
@@ -16,7 +24,13 @@ namespace noone
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // add dbcontext to service
+            //configer JWT
+
+            builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
+
+            //add Identity User
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<NoonEntities>();
+            // add dbcontext to service--
             //get connection string
             string connectionString = builder.Configuration.GetConnectionString("Ahmed Alaa");
             builder.Services.AddDbContext<NoonEntities>(optionsBuilde =>
@@ -24,8 +38,32 @@ namespace noone
                 optionsBuilde.UseSqlServer(connectionString);
             });
 
-            var app = builder.Build();
+            // Register IAuthenticationReposatory
+            builder.Services.AddScoped<IAuthenticationReposatory, AuthenticationReposatory>();
 
+            // Add Authentication
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+              .AddJwtBearer(o =>
+              {
+                  o.RequireHttpsMetadata = false;
+                  o.SaveToken = false;
+                  o.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      ValidateIssuerSigningKey = true,
+                      ValidateIssuer = true,
+                      ValidateAudience = true,
+                      ValidateLifetime = true,
+                      ValidIssuer = builder.Configuration["JWT:Issuer"],
+                      ValidAudience = builder.Configuration["JWT:Audience"],
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+                  };
+              });
+
+            var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -33,6 +71,7 @@ namespace noone
                 app.UseSwaggerUI();
             }
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
