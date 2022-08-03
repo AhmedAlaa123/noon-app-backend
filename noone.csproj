@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ApplicationDTO\" />
     <Folder Include="wwwroot\images\CompaniesImages\" />
     <Folder Include="wwwroot\images\ProductsImages\" />
     <Folder Include="wwwroot\images\SiteImages\" />
