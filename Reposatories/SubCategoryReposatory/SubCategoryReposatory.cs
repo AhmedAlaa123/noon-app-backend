@@ -33,6 +33,8 @@ namespace noone.Reposatories.SubCategoryReposatory
 
         }
 
+
+
         public ICollection<SubCategory> GetAll()
         {
             return this.noonEntities.SubCategories.ToList();
@@ -81,5 +83,7 @@ namespace noone.Reposatories.SubCategoryReposatory
             }
             return true;
         }
+
+
     }
 }
