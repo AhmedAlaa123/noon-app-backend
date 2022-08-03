@@ -78,17 +78,23 @@ namespace noone.Controllers
             return BadRequest(ModelState);
         }
 
-        [HttpPut]
-        public IActionResult Update([FromRoute] Guid id, [FromBody] SubCategory newsub)
+        //update subcategory
+        [HttpPut("{ID}")]
+        public IActionResult Update([FromRoute] Guid ID, SubCategoryInfoDTO createDTO)
         {
             if (ModelState.IsValid)
             {
-                bool isUpdate = reposatory.Update(id, newsub);
-                if (!isUpdate)
-                    return BadRequest("لم يتم تحديث البيانات يرجي اعادة المحاولة ");
+                SubCategory subCategoryy = new SubCategory()
+                {
+                    Name = createDTO.SubCategoryName,
+                    Image = createDTO.SubCategoryImage
+                };
 
+                bool isUpdate = reposatory.Update(ID, subCategoryy);
+                if (!isUpdate)
+                 return BadRequest("Problem in Update");
             }
-            return Ok("تم تديث البيانات بنجاح");
+            return Ok("Record Updated");
 
         }
 
