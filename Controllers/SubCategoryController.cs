@@ -95,13 +95,13 @@ namespace noone.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteSubCategory(Guid id)
         {
-             
-            if (id!=null)
+            var supcategory = reposatory.GetById(id);
+            if (supcategory!=null)
             {
                 reposatory.Delete(id);
-                return StatusCode(StatusCodes.Status204NoContent,"Record Deleted");
+                return Ok("Record Deleted");
             }
-                return BadRequest("ID Not Found");
+            return BadRequest("ID Not Found");
         }
 
 
