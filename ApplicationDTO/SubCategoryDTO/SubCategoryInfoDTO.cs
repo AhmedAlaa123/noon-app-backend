@@ -1,4 +1,6 @@
-﻿namespace noone.ApplicationDTO.SubCategoryDto
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace noone.ApplicationDTO.SubCategoryDto
 {
     public class SubCategoryInfoDTO
     {
