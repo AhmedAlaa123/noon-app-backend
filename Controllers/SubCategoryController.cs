@@ -19,7 +19,7 @@ namespace noone.Controllers
             this.env = env;
         }
         //Get all SupCategories
-        [HttpGet]
+        [HttpGet("getall")]
         public IActionResult GetallSupcategory()
         {
             var supcategories = reposatory.GetAll();
@@ -36,7 +36,7 @@ namespace noone.Controllers
             return Ok(infoDTOs);
         }
         //Get  SupCategories By ID
-        [HttpGet("{id}", Name = "GetSupCategoryById")]
+        [HttpGet("getby/{id}", Name = "GetSupCategoryById")]
         
         public IActionResult GetSupcategoryByid(Guid id)
         {
@@ -92,15 +92,16 @@ namespace noone.Controllers
 
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteSubCategory(Guid id)
         {
-            bool isDeleted = reposatory.Delete(id);
-            if (!isDeleted)
+             
+            if (id!=null)
             {
-                return BadRequest("!خطأ..لم يتم حذف البيانات");
+                reposatory.Delete(id);
+                return StatusCode(StatusCodes.Status204NoContent,"Record Deleted");
             }
-            return Ok("تم الحذف بنجاح");
+                return BadRequest("ID Not Found");
         }
 
 
