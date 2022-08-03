@@ -5,6 +5,10 @@ namespace noone.Reposatories.AuthenticationReposatory
 {
     public interface IAuthenticationReposatory
     {
+
+        //Login
+        Task<AuthenticationModel> GetTokenAsync(ApplicationUserSignInDTO userSignInDTO);
+
         Task<AuthenticationModel> RegisetrAsync(ApplicationUserRegisterDTO userRegisterDTO);
       
     }

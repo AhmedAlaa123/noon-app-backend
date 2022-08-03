@@ -9,6 +9,27 @@ namespace noone.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+
+        private readonly IAuthenticationReposatory _authRepo;
+
+        public AccountController(IAuthenticationReposatory AuthRepo)
+        {
+            _authRepo = AuthRepo;
+        }
+
+        [HttpPost("SignIn")] //GetTokenAsync
+        public async Task<IActionResult> GetTokenAsync([FromBody] ApplicationUserSignInDTO userSignInDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authRepo.GetTokenAsync(userSignInDTO);
+
+            if (!result.IsAuthenticated)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+        }
         private readonly IAuthenticationReposatory _authenticationReposatory;
 
         public AccountController(IAuthenticationReposatory authenticationReposatory)
