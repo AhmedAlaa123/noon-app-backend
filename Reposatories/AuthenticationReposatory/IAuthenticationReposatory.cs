@@ -7,7 +7,7 @@ namespace noone.Reposatories.AuthenticationReposatory
     {
 
         //Login
-        Task<AuthenticationModel> GetTokenAsync(ApplicationUserSignInDTO model);
+        Task<AuthenticationModel> GetTokenAsync(ApplicationUserSignInDTO userSignInDTO);
 
         Task<AuthenticationModel> RegisetrAsync(ApplicationUserRegisterDTO userRegisterDTO);
       

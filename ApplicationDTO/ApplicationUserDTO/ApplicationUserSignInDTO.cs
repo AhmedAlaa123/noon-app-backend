@@ -13,7 +13,6 @@ namespace noone.ApplicationDTO.ApplicationUserDTO
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-       // [Display(Name = "تذكرنى")]
-       // public bool RememberMe { get; set; }
+       
     }
 }
