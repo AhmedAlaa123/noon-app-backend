@@ -18,14 +18,26 @@ namespace noone.Controllers
             reposatory = subCategory;
             this.env = env;
         }
+        //Get all SupCategories
         [HttpGet]
         public IActionResult GetallSupcategory()
         {
             var supcategories = reposatory.GetAll();
-            return Ok(supcategories);
+            List<SubCategoryInfoDTO> infoDTOs = new List<SubCategoryInfoDTO>();
+            foreach (var supcategory in supcategories)
+            {
+                SubCategoryInfoDTO infoDTO = new SubCategoryInfoDTO();
+                infoDTO.SubCategoryId = supcategory.Id;
+                infoDTO.SubCategoryName = supcategory.Name;
+                infoDTO.SubCategoryImage = supcategory.Image;
+                infoDTOs.Add(infoDTO);
+            }
+            
+            return Ok(infoDTOs);
         }
-        [HttpGet]
-        [Route("{id}",Name ="GetSupCategoryById")]
+        //Get  SupCategories By ID
+        [HttpGet("{id}", Name = "GetSupCategoryById")]
+        
         public IActionResult GetSupcategoryByid(Guid id)
         {
             var supcategory = reposatory.GetById(id);
@@ -33,9 +45,14 @@ namespace noone.Controllers
             {
             return BadRequest("ID Not Found");
             }
-            return Ok(supcategory);
-        }
+            SubCategoryInfoDTO infoDTO = new SubCategoryInfoDTO();
+            infoDTO.SubCategoryId=supcategory.Id;
+            infoDTO.SubCategoryName = supcategory.Name;
+            infoDTO.SubCategoryImage = supcategory.Image;
+            return Ok(infoDTO);
 
+        }
+        //Add  SupCategories
         [HttpPost]
         public IActionResult AddSupcategory(SubCategoryCreateDTO createDTO)
         {
