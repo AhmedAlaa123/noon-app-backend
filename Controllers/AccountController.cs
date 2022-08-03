@@ -10,11 +10,12 @@ namespace noone.Controllers
     public class AccountController : ControllerBase
     {
 
-        private readonly IAuthenticationReposatory _authRepo;
+        private readonly IAuthenticationReposatory _authenticationReposatory;
+       
 
         public AccountController(IAuthenticationReposatory AuthRepo)
         {
-            _authRepo = AuthRepo;
+            _authenticationReposatory = AuthRepo;
         }
 
         [HttpPost("SignIn")] //GetTokenAsync
@@ -23,21 +24,16 @@ namespace noone.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _authRepo.GetTokenAsync(userSignInDTO);
+            var result = await _authenticationReposatory.GetTokenAsync(userSignInDTO);
 
             if (!result.IsAuthenticated)
                 return BadRequest(result.Message);
 
             return Ok(result);
         }
-        private readonly IAuthenticationReposatory _authenticationReposatory;
+       
 
-        public AccountController(IAuthenticationReposatory authenticationReposatory)
-        {
-            _authenticationReposatory = authenticationReposatory;
-        }
-
-        [HttpPost("/Register")]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register(ApplicationUserRegisterDTO userRegisterDTO)
         {
 

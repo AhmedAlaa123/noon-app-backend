@@ -6,31 +6,31 @@ namespace noone.ApplicationDTO.ApplicationUserDTO
     public class ApplicationUserRegisterDTO
     {
 
-        [Required]
+        [Required(ErrorMessage ="البريد الالكترونى مطلوب*")]
         public string Email { get;set; }
 
-        [Required, UniqueUserName]
+        [Required(ErrorMessage ="اسم المستخدم مطلوب *"), UniqueUserName]
         public string UserName { get; set; }
 
-        [Required, MinLength(8)]
+        [Required(ErrorMessage ="كلمه المرور مطلوبه *"), MinLength(8,ErrorMessage ="كلمه المرور قصيره اقل عدد من الحروف 3 *")]
         public string Password { get; set; }
 
-        [Required, StringLength(11)]
+        [Required(ErrorMessage ="رقم الهاتف مطلوب"), StringLength(11,ErrorMessage ="رقم الهاتف ينبغى ان يكون 11 رقم *")]
         public  string PhoneNumber { get; set; }
 
-        [Required, MinLength(3), MaxLength(20)]
+        [Required(ErrorMessage ="الاسم الاول مطلوب *"), MinLength(3,ErrorMessage = "اقل حدد من الحروف فى الاسم الاول 3*"), MaxLength(20,ErrorMessage ="اكبر عدد من الحروف فى الاسم الاول 20 حرف *")]
         public string FirstName { get; set; }
 
-        [Required, MinLength(3), MaxLength(20)]
+        [Required(ErrorMessage ="الاسم الاخير مطلوب *"), MinLength(3,ErrorMessage =" اقل عدد من الحروف الاخير 3 حروف"), MaxLength(20,ErrorMessage = "اكبر عدد من الحروف فى الاسم الاخير 20 حرف *")]
         public string LastName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="اسم الدوله مطلوب *")]
         public string Country { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="اسم المدينه مطلوب *")]
         public string City { get; set; }
 
-        [Required]
+        [Required(ErrorMessage ="بيانات الشارع مطلوبه *")]
         public string Street { get; set; }
     }
 }
