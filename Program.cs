@@ -4,10 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using noone.Helpers;
 using noone.Models;
+
+using noone.Reposatories.CateegoryReposatory;
+
 using noone.Reposatories;
 using noone.Reposatories.AuthenticationReposatory;
 
 using System.Text;
+
 
 namespace noone
 {
@@ -24,6 +28,10 @@ namespace noone
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddScoped<ICategoryReposatory, CategoryReposatory>();
+            // add dbcontext to service
+
+
             //configer JWT
 
             builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
@@ -31,6 +39,7 @@ namespace noone
             //add Identity User
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<NoonEntities>();
             // add dbcontext to service--
+
             //get connection string
             string connectionString = builder.Configuration.GetConnectionString("Mona");
             builder.Services.AddDbContext<NoonEntities>(optionsBuilde =>
