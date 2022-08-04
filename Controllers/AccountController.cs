@@ -32,9 +32,15 @@ namespace noone.Controllers
             return Ok(result);
         }
        
+        [HttpPost("SignOut")]
+        public async Task<IActionResult> SignOut([FromBody] string UserName)
+        {
+            var test = await this._authenticationReposatory.SignOutAsync(UserName);
+            return Ok(test);
+        }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(ApplicationUserRegisterDTO userRegisterDTO)
+        public async Task<IActionResult> Register([FromBody]ApplicationUserRegisterDTO userRegisterDTO)
         {
 
             if (!ModelState.IsValid)
@@ -46,9 +52,57 @@ namespace noone.Controllers
                 return BadRequest(authentcationModel.Message);
             }
             return Ok(authentcationModel);
+        }
 
+        [HttpPost("addRole")]
+        public async Task<IActionResult> AddRole(ApplicationUserAddRoleDTO userAddRoleDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
+            string message = await this._authenticationReposatory.AddUserToRole(userAddRoleDTO);
+            
+            if (!string.IsNullOrEmpty(message))
+                return BadRequest(message);
 
+            return Ok(userAddRoleDTO);
+        }
+        [HttpDelete("removeUser/{deletedUserId}")]
+        public async Task<IActionResult> RemoveUser([FromBody]string JWTToken,[FromRoute] string deletedUserId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            string message = await this._authenticationReposatory.RemoveUser(JWTToken, deletedUserId);
+
+            if (!string.IsNullOrEmpty(message))
+                return BadRequest(message);
+
+            return Ok("تم حذف المستخدم بنجاح");
+        }
+        [HttpDelete("removeRole")]
+        public async Task<IActionResult> RemoveRole(ApplicationUserAddRoleDTO userAddRoleDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            string message = await this._authenticationReposatory.RemoveRoleFromUser(userAddRoleDTO);
+
+            if (!string.IsNullOrEmpty(message))
+                return BadRequest(message);
+
+            return Ok("تم حذف الوظيفه من على المستخدم");
+        }
+
+        [HttpGet("users/{userToken}")]
+        public async Task<ActionResult> GetAllUsers(string userToken)
+        {
+            if (userToken == null)
+                return BadRequest("userToken Must not be null");
+            var users = await this._authenticationReposatory.GetAllUsers(userToken);
+            if (users is null)
+                return BadRequest("غير مسموح لك");
+            return Ok(users);
         }
     }
 }

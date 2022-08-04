@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+
 using noone.ApplicationDTO.ApplicationUserDTO;
 using noone.Contstants;
 using noone.Helpers;
@@ -58,7 +59,7 @@ namespace noone.Reposatories.AuthenticationReposatory
             };
 
             //create user in the database
-            var result = await this._userManger.CreateAsync(newUser, userRegisterDTO.Password);
+            var result = await this._userManger.CreateAsync(newUser, newUser.Password);
 
             //check if user is not created
             if (!result.Succeeded)
@@ -110,7 +111,7 @@ namespace noone.Reposatories.AuthenticationReposatory
             // check first on existing user then check password matching 
             if (User is null || !await _userManger.CheckPasswordAsync(User, userSignInDTO.Password))
             {
-                AuthModel.Message = "الايميل او كلمة المرور غير متاحة ";
+                AuthModel.Message = "اسم المستخدم او كلمة المرور غير متاحة ";
                 return AuthModel;
             }
             var jwtsecurityToken = await CreateJwtToken(User);
@@ -126,8 +127,111 @@ namespace noone.Reposatories.AuthenticationReposatory
 
             return AuthModel;
         }
+        // This Method Used To Sign out the user
+        public async Task<AuthenticationModel> SignOutAsync(string userName)
+        {
+            var AuthModel = new AuthenticationModel();
+            var User = await _userManger.FindByNameAsync(userName);
+            if(User is null)
+            {
+                AuthModel.Message = "المستخدم غير موجود";
+                return AuthModel;
+            }
+            var jwtsecurityToken = await CreateJwtToken(User);
+            var rolesList = await _userManger.GetRolesAsync(User);
+            AuthModel.IsAuthenticated = false;
+            AuthModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtsecurityToken);
+            AuthModel.Email = User.Email;
+            AuthModel.Username = User.UserName;
+            AuthModel.ExpiresOn = jwtsecurityToken.ValidTo;
+            return AuthModel;
+        }
+        private async Task<string> IsAdmin(string JWTToken)
+        {
+            // get UserName from JWT Token
+            var userName = new JwtSecurityTokenHandler().ReadJwtToken(JWTToken).Subject;
 
+            var user = await this._userManger.FindByNameAsync(userName);
+            if (user is null || !await this._userManger.IsInRoleAsync(user, Roles.ADMIN_ROLE))
+                return "ليس لك صلاحيه";
+            return string.Empty;
+        }
+        //this method used to delete user from database
+        public async Task<string> RemoveUser(string JWTToken, string deletedUserId)
+        {
 
+            string messgage = await IsAdmin(JWTToken);
+            if (!string.IsNullOrEmpty(messgage))
+                return messgage;
+
+            var userdelete = await this._userManger.FindByIdAsync(deletedUserId);
+            if(userdelete is null)
+            {
+                return "المستخدم غير موجود *";
+            }
+
+            var result =await this._userManger.DeleteAsync(userdelete);
+            return result.Succeeded? String.Empty:"لم يتم حذف المستخدم";
+        }
+        // This Method Used To Get All Users
+        public async Task<IEnumerable<ApplicationUserInfoDTO>> GetAllUsers(string JWTToken)
+        {
+            string messgage = await IsAdmin(JWTToken);
+            if (!string.IsNullOrEmpty(messgage))
+                return null;
+
+           var users= this._userManger.Users.
+                            ToList().
+                            Select( (user) => new ApplicationUserInfoDTO
+                                {
+                                    Id = user.Id,
+                                    FirstName = user.FirstName,
+                                    LastName = user.LastName,
+                                    Email = user.Email,
+                                    UserName = user.UserName,
+                                    PhoneNumber=user.PhoneNumber,
+                                    Country = user.Country,
+                                    City = user.City,
+                                    Street = user.Street,
+                                   
+                                }
+                            );
+            return users.ToList();
+        }
+        // this method used to add role to user
+        public async Task<string> AddUserToRole(ApplicationUserAddRoleDTO userAddRoleDTO)
+        {
+
+            var user = await this._userManger.FindByIdAsync(userAddRoleDTO.UserId);
+
+            if (user is null || !await this._roleManger.RoleExistsAsync(userAddRoleDTO.Role))
+                return "رقم المستخدم او الوظيفه غير موجود *";
+
+            if (await this._userManger.IsInRoleAsync(user, userAddRoleDTO.Role))
+                return "المستخدم بالفعل مضاف لهذه الوظيفه *";
+
+            var result= await this._userManger.AddToRoleAsync(user, userAddRoleDTO.Role);
+            return result.Succeeded ?string.Empty: "هناك خطأ حدث";
+
+        }
+
+        // this method used to remove role from user
+        public async Task<string> RemoveRoleFromUser(ApplicationUserAddRoleDTO userAddRoleDTO)
+        {
+            var user = await this._userManger.FindByIdAsync(userAddRoleDTO.UserId);
+
+            if (user is null || !await this._roleManger.RoleExistsAsync(userAddRoleDTO.Role))
+                return "رقم المستخدم او الوظيفه غير موجود *";
+
+            if (await this._userManger.IsInRoleAsync(user, userAddRoleDTO.Role))
+            {
+                var result = await this._userManger.RemoveFromRoleAsync(user, userAddRoleDTO.Role);
+                return result.Succeeded ? string.Empty : "هناك خطأ حدث";
+            }
+            return "هذا المستخدم ليس مضاف على هذه الوظيفه *";
+
+           
+        }
 
         // this method to generate JWT Token
         private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)
@@ -152,25 +256,24 @@ namespace noone.Reposatories.AuthenticationReposatory
                 new Claim(JwtRegisteredClaimNames.Email,user.Email)
             }.Union(userClimes).Union(roleClaims);
 
+
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Key));
             var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
-
-            // create token
-            var jwtSecurityToken = new JwtSecurityToken(
-               issuer: _jwt.Issuer,
-               audience: _jwt.Audience,
-               claims: claims,
-               expires: DateTime.Now.AddDays(_jwt.DurationInDays),
-               signingCredentials: signingCredentials);
-
+            
+             // create token
+             var jwtSecurityToken = new JwtSecurityToken(
+                 issuer: _jwt.Issuer,
+                 audience: _jwt.Audience,
+                  claims: claims,
+                 expires: DateTime.Now.AddDays(_jwt.DurationInDays),
+                 signingCredentials: signingCredentials);
             return jwtSecurityToken;
 
 
 
         }
 
-
-
+       
     }
 
 }
