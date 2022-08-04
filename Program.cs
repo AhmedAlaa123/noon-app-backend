@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using noone.Models;
+using noone.Reposatories.CateegoryReposatory;
 
 namespace noone
 {
@@ -15,7 +16,7 @@ namespace noone
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            builder.Services.AddScoped<ICategoryReposatory, CategoryReposatory>();
             // add dbcontext to service
             //get connection string
             string connectionString = builder.Configuration.GetConnectionString("Ahmed Alaa");
