@@ -14,9 +14,13 @@ namespace noone.Models
         [Required, MinLength(8)]
         public string Password { get; set; }
 
+        [Required,StringLength(11)]
+        public override string PhoneNumber { get; set; }
+
         [Required,MinLength(3),MaxLength(20)]
         public string FirstName { get; set; }
         
+
         [Required,MinLength(3),MaxLength(20)]
         public string LastName { get; set; }
 
