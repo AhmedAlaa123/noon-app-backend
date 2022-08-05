@@ -77,7 +77,7 @@ namespace noone.Controllers
                 sub.Image = createDTO.Image;
               //  sub.Category_Id = createDTO.Category_Id;
 
-                sub.Image =createDTO.Image;
+                
               
                 bool isIsAdded=await reposatory.Insert(sub);
                 if (!isIsAdded)
