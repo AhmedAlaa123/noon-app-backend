@@ -87,22 +87,8 @@ namespace noone.Controllers
             return BadRequest(ModelState);
         }
 
-
-        
-      
-        [HttpDelete("{id}")]
-        public IActionResult DeleteSubCategory(Guid id)
-        {
-            bool isDeleted =reposatory.Delete(id);
-            if (!isDeleted)
-            {
-                return BadRequest("!خطأ..لم يتم حذف البيانات");
-            }
-            return Ok("تم الحذف بنجاح");
-        }
-
-        [HttpPut("{ID}")]
-        public IActionResult Update([FromRoute]Guid ID ,SubCategoryInfoDTO createDTO)
+        [HttpPut]
+        public IActionResult Update([FromRoute] Guid id, [FromBody] SubCategory newsub)
         {
             if (ModelState.IsValid)
             {
@@ -122,6 +108,17 @@ namespace noone.Controllers
 
         }
 
+        [HttpDelete("{id}")]
+        public IActionResult DeleteSubCategory(Guid id)
+        {
+            var supcategory = reposatory.GetById(id);
+            if (supcategory!=null)
+            {
+                reposatory.Delete(id);
+                return Ok("Record Deleted");
+            }
+            return BadRequest("ID Not Found");
+        }
 
 
     }
