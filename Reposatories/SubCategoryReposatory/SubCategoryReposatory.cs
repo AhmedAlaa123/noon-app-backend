@@ -3,7 +3,7 @@ using noone.Models;
 
 namespace noone.Reposatories.SubCategoryReposatory
 {
-    public class SubCategoryReposatory : IReposatory <SubCategory>
+    public class SubCategoryReposatory : IReposatory<SubCategory>
     {
         private readonly NoonEntities noonEntities;
 
@@ -13,9 +13,9 @@ namespace noone.Reposatories.SubCategoryReposatory
         }
 
 
-        public bool Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
-            SubCategory subCategory = this.GetById(id);
+            SubCategory subCategory = await this.GetById(id);
             if (subCategory == null)
                 return false;
             try
@@ -35,25 +35,25 @@ namespace noone.Reposatories.SubCategoryReposatory
 
 
 
-        public ICollection<SubCategory> GetAll()
+        public async Task<ICollection<SubCategory>> GetAll()
         {
-            return this.noonEntities.SubCategories.ToList();
+            return await this.noonEntities.SubCategories.ToListAsync();
 
         }
 
-        public SubCategory GetById(Guid Id)
+        public async Task<SubCategory> GetById(Guid Id)
         {
-            return this.noonEntities.SubCategories.FirstOrDefault(emp => emp.Id == Id);
+            return await this.noonEntities.SubCategories.FirstOrDefaultAsync(emp => emp.Id == Id);
         }
 
-        public bool Insert(SubCategory item)
+        public async Task<bool> Insert(SubCategory item)
         {
             try
             {
              
 
                 this.noonEntities.SubCategories.Add(item);
-                this.noonEntities.SaveChanges();
+               await this.noonEntities.SaveChangesAsync();
 
             }
             catch
@@ -65,9 +65,9 @@ namespace noone.Reposatories.SubCategoryReposatory
 
         }
 
-        public bool Update(Guid Id,SubCategory subCategory)
+        public async Task<bool> Update(Guid Id,SubCategory subCategory)
         {
-            SubCategory Oldone = this.noonEntities.SubCategories.FirstOrDefault(emp => emp.Id == Id);
+            SubCategory Oldone = await this.noonEntities.SubCategories.FirstOrDefaultAsync(emp => emp.Id == Id);
             if (subCategory== null)
                 return false;
             try
@@ -76,7 +76,7 @@ namespace noone.Reposatories.SubCategoryReposatory
                 Oldone.Image = subCategory.Image;
                 Oldone.Category_Id = subCategory.Category_Id;
                 Oldone.Products = subCategory.Products;
-                this.noonEntities.SaveChanges();
+               await this.noonEntities.SaveChangesAsync();
             }
             catch (Exception ex)
             {

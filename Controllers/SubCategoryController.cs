@@ -20,9 +20,9 @@ namespace noone.Controllers
         }
         //Get all SupCategories
         [HttpGet("getall")]
-        public IActionResult GetallSupcategory()
+        public async Task<IActionResult> GetallSupcategory()
         {
-            var supcategories = reposatory.GetAll();
+            var supcategories = await reposatory.GetAll();
             List<SubCategoryInfoDTO> infoDTOs = new List<SubCategoryInfoDTO>();
             foreach (var supcategory in supcategories)
             {
@@ -38,15 +38,15 @@ namespace noone.Controllers
         //Get  SupCategories By ID
         [HttpGet("getby/{id}", Name = "GetSupCategoryById")]
         
-        public IActionResult GetSupcategoryByid(Guid id)
+        public async Task<IActionResult> GetSupcategoryByid(Guid id)
         {
-            var supcategory = reposatory.GetById(id);
+            var supcategory = await reposatory.GetById(id);
             if (supcategory==null)
             {
             return BadRequest("ID Not Found");
             }
             SubCategoryInfoDTO infoDTO = new SubCategoryInfoDTO();
-            infoDTO.SubCategoryId=supcategory.Id;
+            infoDTO.SubCategoryId= supcategory.Id;
             infoDTO.SubCategoryName = supcategory.Name;
             infoDTO.SubCategoryImage = supcategory.Image;
             return Ok(infoDTO);
@@ -54,7 +54,7 @@ namespace noone.Controllers
         }
         //Add  SupCategories
         [HttpPost]
-        public IActionResult AddSupcategory(SubCategoryCreateDTO createDTO)
+        public async Task<IActionResult> AddSupcategory(SubCategoryCreateDTO createDTO)
         {
             SubCategory sub = new SubCategory();
             if(ModelState.IsValid)
@@ -70,7 +70,9 @@ namespace noone.Controllers
                 sub.Name = createDTO.Name;
                 sub.Image =createDTO.Image;
               
-                reposatory.Insert(sub);
+                bool isIsAdded=await reposatory.Insert(sub);
+                if (!isIsAdded)
+                    return BadRequest("حدث خطأ اعد المحاوله");
                 string url = Url.Link("GetSupCategoryById",new {id=sub.Id});
                 return Created(url,sub);
             }
@@ -80,7 +82,7 @@ namespace noone.Controllers
 
         //update subcategory
         [HttpPut("{ID}")]
-        public IActionResult Update([FromRoute] Guid ID, SubCategoryInfoDTO createDTO)
+        public async Task<IActionResult> Update([FromRoute] Guid ID, SubCategoryInfoDTO createDTO)
         {
             if (ModelState.IsValid)
             {
@@ -90,7 +92,7 @@ namespace noone.Controllers
                     Image = createDTO.SubCategoryImage
                 };
 
-                bool isUpdate = reposatory.Update(ID, subCategoryy);
+                bool isUpdate = await reposatory.Update(ID, subCategoryy);
                 if (!isUpdate)
                  return BadRequest("Problem in Update");
             }
@@ -99,15 +101,17 @@ namespace noone.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteSubCategory(Guid id)
+        public async Task<IActionResult> DeleteSubCategory(Guid id)
         {
-            var supcategory = reposatory.GetById(id);
+            var supcategory = await reposatory.GetById(id);
             if (supcategory!=null)
             {
-                reposatory.Delete(id);
-                return Ok("Record Deleted");
+                bool isDeleted=await reposatory.Delete(id);
+                if (!isDeleted)
+                    return BadRequest("حدث خطأ فى عمليه الحذف اعد المحاوله");
+                return Ok("تم حذف العنصر");
             }
-            return BadRequest("ID Not Found");
+            return BadRequest($" ليس متاح {id.ToString()}");
         }
 
 
