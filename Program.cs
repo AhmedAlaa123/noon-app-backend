@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using noone.Helpers;
 using noone.Models;
+using noone.Reposatories;
+using noone.Reposatories.SubCategoryReposatory;
 
 using noone.Reposatories.CateegoryReposatory;
 
@@ -28,7 +30,12 @@ namespace noone
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            //add custom sevices
+            builder.Services.AddScoped<IReposatory<SubCategory>, SubCategoryReposatory>();
+
+
             builder.Services.AddScoped<ICategoryReposatory, CategoryReposatory>();
+
             // add dbcontext to service
 
 

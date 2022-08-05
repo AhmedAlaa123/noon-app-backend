@@ -3,8 +3,8 @@
     public interface IReposatory<T>
     {
         bool Insert(T item);
-        bool Delete(T item);
-        bool Update(Guid Id);
+        bool Delete(Guid Id);
+        bool Update(Guid Id,T newItem);
         T GetById(Guid Id);
         ICollection<T> GetAll();
     }
