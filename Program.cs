@@ -27,9 +27,9 @@ namespace noone
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
-            builder.Services.AddScoped<ICategoryReposatory, CategoryReposatory>();
-            // add dbcontext to service
+            //  Register Category Reposatory
+            builder.Services.AddScoped<IReposatory<Category>, CategoryReposatory>();
+          
 
 
             //configer JWT

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using noone.DTO.categoryDTO;
-using noone.Reposatories.CateegoryReposatory;
+using noone.ApplicationDTO.categoryDTO;
+using noone.Reposatories;
+using noone.Models;
+using System.Collections.Generic;
 
 namespace noone.Controllers
 {
@@ -9,54 +11,72 @@ namespace noone.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryReposatory category;
-        public CategoryController(ICategoryReposatory _category)
+        private readonly IReposatory<Category> categoryReposatry;
+        public CategoryController(IReposatory<Category> _categoryReposatry)
         {
-            this.category = _category;
+            this.categoryReposatry = _categoryReposatry;
         }
-        [HttpGet]
-        public IActionResult GetCategories()
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetCategories()
         {
-            return Ok(category.GetAll());
-        }
-        [HttpGet("{id}")]
-        public IActionResult GetCategoryById(Guid id)
-        {
-            if (ModelState.IsValid)
+            List<CategoryInfoDTO> categories = new List<CategoryInfoDTO>();
+            foreach(var cate in await categoryReposatry.GetAll())
             {
-                if (category.GetById(id) != null)
-                    return Ok(category.GetById(id));
+                categories.Add(new CategoryInfoDTO { Id=cate.Id,Name=cate.Name});
             }
-            return BadRequest();
+            return Ok(categories);
+        }
+        [HttpGet("categories/{id}")]
+        public async Task<IActionResult> GetCategoryById(Guid id)
+        {
+           
+                Category category = await categoryReposatry.GetById(id);
+                if ( category != null)
+                    return Ok(category);
+            return BadRequest($"غير موجود {id}");
 
         }
         [HttpPost]
-        public IActionResult AddCategory(AddcategoryDTO categoryDto)
+        public async Task<IActionResult> AddCategory(CategoryCreateDTO categoryDto)
         {
             if (ModelState.IsValid)
             {
-                category.Insert(categoryDto);
-                return StatusCode(201,categoryDto.Name+" created");
+                Category newCategory = new Category
+                {
+                    Name=categoryDto.Name,
+                    
+                };
+                bool isAdded=await categoryReposatry.Insert(newCategory);
+                if (isAdded)
+                    return StatusCode(201, categoryDto.Name + " تم اضافه");
+                else
+                    return BadRequest("لم الاضافه بنجاح");
             }
             else
                 return BadRequest(ModelState);
         }
         [HttpPut("{id}")]
-        public IActionResult EditCategory(Guid id,AddcategoryDTO categoryDto)
+        public async Task<IActionResult> EditCategory(Guid id,AddcategoryDTO categoryDto)
         {
+            
             if (ModelState.IsValid)
             {
-                category.Update(id,categoryDto);
-                return StatusCode(204,"Updated Successfully");
+                Category CategoryWithUpdate = new Category { Name = categoryDto.Name };
+               bool isUpdated=await categoryReposatry.Update(id, CategoryWithUpdate);
+
+                if(isUpdated)
+                return StatusCode(204,"تم تعديل البيانات");
+                else
+                    BadRequest("حدث خطا اعد المحاوله");
             }
             return BadRequest(ModelState);
         }
         [HttpDelete("{id}")]
-        public IActionResult DeleteCategory(Guid id)
+        public async Task<IActionResult> DeleteCategory(Guid id)
         {
-            if (category.Delete(id))
-                return Ok(" Deleted successully");
-            return BadRequest("Invalid Id");
+            if (await categoryReposatry.Delete(id))
+                return Ok("تم الحذف بنجاح");
+            return BadRequest($"غير متاح {id.ToString()}");
         }
     }
 }

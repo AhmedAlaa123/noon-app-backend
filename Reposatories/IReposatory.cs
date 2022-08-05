@@ -2,10 +2,10 @@
 {
     public interface IReposatory<T>
     {
-        bool Insert(T item);
-        bool Delete(T item);
-        bool Update(Guid Id);
-        T GetById(Guid Id);
-        ICollection<T> GetAll();
+        Task<bool> Insert(T item);
+        Task<bool> Delete(Guid Id);
+        Task<bool> Update(Guid Id,T Item);
+        Task<T> GetById(Guid Id);
+        Task<ICollection<T>> GetAll();
     }
 }
