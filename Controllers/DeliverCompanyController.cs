@@ -107,6 +107,42 @@ namespace noone.Controllers
             return string.Empty;
         }
 
-   
+        //Edit Company 
+
+        [HttpPost("UpdateDeliverCompany")]
+        [HttpPut("{token:alpha}/{id}")]
+        public async Task<IActionResult> UpdateDeliverCompany( string token, [FromBody] DeliverCompanyCreateDTO deliverCompany ,  Guid id)   
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            // check if user is Admin Or Employee
+            if (!string.IsNullOrEmpty(await CheckEditIsAdminOrEmployee(token)))
+                return Unauthorized(await CheckEditIsAdminOrEmployee(token));
+            DeliverCompany UpdatedDeliverCompany = new DeliverCompany { Name = deliverCompany.Name };
+            bool isUpdated = await this._deliverCompanyReposatory.Update(id, UpdatedDeliverCompany);
+
+           
+
+            if (!isUpdated)
+                return BadRequest("لم يتم التعديل اعد المحاوله");
+
+            return Ok(deliverCompany);
+
+
+
+        }
+
+        private async Task<string> CheckEditIsAdminOrEmployee(string Token)
+        {
+            var jwtSecurity = TokenConverter.ConvertToken(Token);
+            if (jwtSecurity == null)
+                return " غير مسموح لك  بالتعديل ";
+
+            var user = await this._useManger.FindByNameAsync(jwtSecurity.Subject);
+            if (user == null || !await this._useManger.IsInRoleAsync(user, Roles.ADMIN_ROLE) && !await this._useManger.IsInRoleAsync(user, Roles.EMPLOYEE_ROLE))
+                return $"{!await this._useManger.IsInRoleAsync(user, Roles.EMPLOYEE_ROLE)}  غير مسموح لك  بالتعديل ";
+            return string.Empty;
+        }
+
     }
 }
