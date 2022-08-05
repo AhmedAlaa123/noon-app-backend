@@ -4,6 +4,7 @@ using noone.Models;
 using noone.Reposatories;
 using noone.Reposatories.SubCategoryReposatory;
 using noone.ApplicationDTO.SubCategoryDto;
+using noone.ApplicationDTO.SubCategoryDTO;
 
 namespace noone.Controllers
 {
@@ -88,7 +89,7 @@ namespace noone.Controllers
         }
 
         [HttpPut]
-        public IActionResult Update([FromRoute] Guid id, [FromBody] SubCategory newsub)
+        public IActionResult Update([FromRoute] Guid id, [FromBody] SubCategoryUpdateDTO createDTO)
         {
             if (ModelState.IsValid)
             {
@@ -98,7 +99,7 @@ namespace noone.Controllers
                     Image=createDTO.SubCategoryImage
                 };
 
-                bool isUpdate = reposatory.Update(ID,subCategoryy);
+                bool isUpdate = reposatory.Update(id,subCategoryy);
                 if (!isUpdate)
                     return BadRequest("لم يتم تحديث البيانات يرجي اعادة المحاولة ");
 
