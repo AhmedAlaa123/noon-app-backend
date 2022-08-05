@@ -109,16 +109,21 @@ namespace noone.Controllers
 
         //Edit Company 
 
-        [HttpPost("UpdateDeliverCompany")]
-        [HttpPut("{token:alpha}/{id}")]
-        public async Task<IActionResult> UpdateDeliverCompany( string token, [FromBody] DeliverCompanyCreateDTO deliverCompany ,  Guid id)   
+      
+        [HttpPut("edit/{token}/{id}")]
+        public async Task<IActionResult> UpdateDeliverCompany( [FromRoute]string token, [FromBody] DeliverCompanyCreateDTO deliverCompany , [FromRoute] Guid id)   
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             // check if user is Admin Or Employee
             if (!string.IsNullOrEmpty(await CheckEditIsAdminOrEmployee(token)))
                 return Unauthorized(await CheckEditIsAdminOrEmployee(token));
-            DeliverCompany UpdatedDeliverCompany = new DeliverCompany { Name = deliverCompany.Name };
+
+            DeliverCompany UpdatedDeliverCompany = new DeliverCompany { 
+                Name = deliverCompany.Name,
+                ContactNumber=deliverCompany.ContactNumber,
+                Address=deliverCompany.Address
+            };
             bool isUpdated = await this._deliverCompanyReposatory.Update(id, UpdatedDeliverCompany);
 
            
