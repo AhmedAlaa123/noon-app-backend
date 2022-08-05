@@ -6,11 +6,9 @@ using noone.Helpers;
 using noone.Models;
 using noone.Reposatories;
 using noone.Reposatories.SubCategoryReposatory;
-
 using noone.Reposatories.CateegoryReposatory;
-
-
 using noone.Reposatories.AuthenticationReposatory;
+using noone.Reposatories.DeliverCompanyReposatory;
 
 using System.Text;
 
@@ -32,7 +30,8 @@ namespace noone
 
             //  Register Category Reposatory
             builder.Services.AddScoped<IReposatory<Category>, CategoryReposatory>();
-          
+            // Register DeliverComponyReposatory
+            builder.Services.AddScoped<IReposatory<DeliverCompany>, DeliverComponyReposatory>();
 
 
             //add custom sevices

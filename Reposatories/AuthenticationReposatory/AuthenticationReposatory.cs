@@ -149,7 +149,11 @@ namespace noone.Reposatories.AuthenticationReposatory
         private async Task<string> IsAdmin(string JWTToken)
         {
             // get UserName from JWT Token
-            var userName = new JwtSecurityTokenHandler().ReadJwtToken(JWTToken).Subject;
+            var jwtSecurityToken = TokenConverter.ConvertToken(JWTToken);
+            if(jwtSecurityToken==null)
+                return "ليس لك صلاحيه";
+
+            var userName = jwtSecurityToken.Subject;
 
             var user = await this._userManger.FindByNameAsync(userName);
             if (user is null || !await this._userManger.IsInRoleAsync(user, Roles.ADMIN_ROLE))
