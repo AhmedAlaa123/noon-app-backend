@@ -17,6 +17,7 @@ namespace noone.Reposatories.DeliverCompanyReposatory
                 var deliverCompany = await this.GetById(Id);
                 if (deliverCompany == null)
                     return false;
+                this._noonEntities.DeliverCompanies.Remove(deliverCompany);
                 await this._noonEntities.SaveChangesAsync();
             }
             catch
@@ -29,12 +30,12 @@ namespace noone.Reposatories.DeliverCompanyReposatory
 
         public async Task<ICollection<DeliverCompany>> GetAll()
         {
-            return await this._noonEntities.DeliverCompanies.ToListAsync();
+            return await this._noonEntities.DeliverCompanies.Include(comp=>comp.Orders).ToListAsync();
         }
 
         public async Task<DeliverCompany> GetById(Guid Id)
         {
-            return await this._noonEntities.DeliverCompanies.FirstOrDefaultAsync();
+            return await this._noonEntities.DeliverCompanies.Include(comp=>comp.Orders).FirstOrDefaultAsync(company=>company.Id== Id);
         }
 
         public async Task<bool> Insert(DeliverCompany item)

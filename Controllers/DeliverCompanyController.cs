@@ -49,17 +49,64 @@ namespace noone.Controllers
 
         }
 
+        [HttpDelete("{companyId}")]
+        public async Task<IActionResult> DeleteDeliverCompany([FromRoute] Guid companyId,[FromBody]string Token)
+        {
+            if(string.IsNullOrWhiteSpace(Token)||string.IsNullOrEmpty(companyId.ToString()))
+            {
+                return BadRequest("الرقم التعريفى للشركه او بيانات المستخدم خطأ");
+            }
+
+            // check if user is authorized
+            if (!string.IsNullOrEmpty(await CheckUseIsAdminOrEmployee(Token)))
+                return Unauthorized(await CheckUseIsAdminOrEmployee(Token));
+
+            // delete company
+            bool isDeleted=await this._deliverCompanyReposatory.Delete(Id:companyId);
+
+            if (!isDeleted)
+                return BadRequest("حدث خطأ لم يتم حذف الشركه");
+            return Ok("تم حذف الشركه");
+        }
+
+        [HttpGet("allDeliverCompanies")]
+        public async Task<IActionResult> GetAllDeliverCompanies()
+        {
+            return Ok(await this._deliverCompanyReposatory.GetAll());
+        }
+
+        [HttpGet("allDeliverCompanies/{companyId}")]
+        public async Task<IActionResult> GetDeliverCompanyById(Guid companyId)
+        {
+            DeliverCompany company=await this._deliverCompanyReposatory.GetById(companyId);
+            if(company is null)
+            {
+                return NotFound("الشركه ليست موجوده");
+            }
+
+            DeliverCompanyInfoDTO deliverCompany = new DeliverCompanyInfoDTO
+            {
+                Id = company.Id,
+                Name = company.Name,
+                Address = company.Address,
+                ContactNumber = company.ContactNumber
+            };
+
+            return Ok(deliverCompany);
+        }
+
         private async Task<string> CheckUseIsAdminOrEmployee(string Token)
         {
             var jwtSecurity = TokenConverter.ConvertToken(Token);
-            if (jwtSecurity == null)
+            if (jwtSecurity is  null)
                 return " غير مسموح لك الاضافه32";
 
             var user = await this._useManger.FindByNameAsync(jwtSecurity.Subject);
-            if (user == null || !await this._useManger.IsInRoleAsync(user, Roles.ADMIN_ROLE) && !await this._useManger.IsInRoleAsync(user, Roles.EMPLOYEE_ROLE))
-                return $"{!await this._useManger.IsInRoleAsync(user, Roles.EMPLOYEE_ROLE)} 323غير مسموح لك الاضافه";
+            if (user is  null || !await this._useManger.IsInRoleAsync(user, Roles.ADMIN_ROLE) && !await this._useManger.IsInRoleAsync(user, Roles.EMPLOYEE_ROLE))
+                return "غير مسموح لك الاضافه";  
             return string.Empty;
         }
 
+   
     }
 }
