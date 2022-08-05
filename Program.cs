@@ -30,11 +30,16 @@ namespace noone
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            //  Register Category Reposatory
+            builder.Services.AddScoped<IReposatory<Category>, CategoryReposatory>();
+          
+
+
             //add custom sevices
             builder.Services.AddScoped<IReposatory<SubCategory>, SubCategoryReposatory>();
 
 
-            builder.Services.AddScoped<ICategoryReposatory, CategoryReposatory>();
+          
 
             // add dbcontext to service
 

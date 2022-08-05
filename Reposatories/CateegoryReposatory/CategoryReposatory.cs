@@ -4,33 +4,34 @@ using noone.Models;
 
 namespace noone.Reposatories.CateegoryReposatory
 {
-    public class CategoryReposatory:ICategoryReposatory
+    public class CategoryReposatory:IReposatory<Category>
     {
         private readonly NoonEntities context;
         public CategoryReposatory(NoonEntities _context)
         {
             this.context = _context;
         }
-       public bool Insert(AddcategoryDTO category)
+       public async Task<bool> Insert(Category category)
         {
             if (category == null)
                 return false;
             Category tempcategory = new Category();
             tempcategory.Name = category.Name;
             context.Categories.Add(tempcategory);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
             return true;
 
         }
-        public bool Delete(Guid Id)
+        public async Task<bool> Delete(Guid Id)
         {
             try
             {
-                Category tempcategory = context.Categories.FirstOrDefault(c=>c.Id==Id);
+                Category tempcategory = context.Categories.FirstOrDefault(c=>c.Id == Id);
                 if (tempcategory != null)
                 {
                     context.Categories.Remove(tempcategory);
-                    context.SaveChanges();
+                    await context.SaveChangesAsync();
+
                     return true;
                 }
             }
@@ -40,15 +41,17 @@ namespace noone.Reposatories.CateegoryReposatory
             }
             return false;
         }
-      public bool Update(Guid Id, AddcategoryDTO category)
+      public async Task<bool> Update(Guid Id, Category category)
         {
            
-                Category oldcategory = context.Categories.FirstOrDefault(c => c.Id == Id);
+                Category oldcategory = await context.Categories.FirstOrDefaultAsync(c => c.Id == Id);
+
                 if (oldcategory != null)
                 {
                     oldcategory.Name = category.Name;
-                    context.SaveChanges();
-                    return true;
+                await context.SaveChangesAsync();
+
+                return true;
                 }
                 return false;   
                 
@@ -57,29 +60,29 @@ namespace noone.Reposatories.CateegoryReposatory
          
             }
 
-       public ListofCategoryDTO GetById(Guid Id)
+       public async Task<Category> GetById(Guid Id)
         {
-            ListofCategoryDTO categoryDto = new ListofCategoryDTO();
+            //ListofCategoryDTO categoryDto = new ListofCategoryDTO();
            
-              categoryDto.Name= context.Categories.FirstOrDefault(c => c.Id == Id).Name;
-               categoryDto.Id=context.Categories.FirstOrDefault(c=>c.Id == Id).Id;
-            return categoryDto;
+            Category category= await context.Categories.FirstOrDefaultAsync(c => c.Id == Id);
+               
+            return category;
         }
-      public ICollection<ListofCategoryDTO> GetAll()
+      public async Task<ICollection<Category>> GetAll()
         {
-         List<Category>categories=context.Categories.Include(c=>c.Products).Include(c=>c.SubCategories).ToList();
-         List<ListofCategoryDTO> list = new List<ListofCategoryDTO>();
-            foreach(var category in categories)
-            {
-                ListofCategoryDTO tempCategory = new ListofCategoryDTO() { Name = category.Name, Id = category.Id };
+         List<Category>categories=await context.Categories.Include(c=>c.Products).Include(c=>c.SubCategories).ToListAsync();
+         //List<ListofCategoryDTO> list = new List<ListofCategoryDTO>();
+         //   foreach(var category in categories)
+         //   {
+         //       ListofCategoryDTO tempCategory = new ListofCategoryDTO() { Name = category.Name, Id = category.Id };
              
-            foreach(var product in category.Products)
-                    tempCategory.productsname.Add(product.Name);
-            foreach (var subCategory in category.SubCategories)
-                    tempCategory.subCategoryName.Add(subCategory.Name);
-           list.Add(tempCategory);
-            }
-            return list;
+         //   foreach(var product in category.Products)
+         //           tempCategory.productsname.Add(product.Name);
+         //   foreach (var subCategory in category.SubCategories)
+         //           tempCategory.subCategoryName.Add(subCategory.Name);
+         //  list.Add(tempCategory);
+         //   }
+            return categories;
         }
     }
 }
