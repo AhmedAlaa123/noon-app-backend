@@ -16,7 +16,7 @@ namespace noone.Controllers
         {
             this.categoryReposatry = _categoryReposatry;
         }
-        [HttpGet("categories")]
+        [HttpGet("All")]
         public async Task<IActionResult> GetCategories()
         {
             List<CategoryInfoDTO> categories = new List<CategoryInfoDTO>();
@@ -26,17 +26,18 @@ namespace noone.Controllers
             }
             return Ok(categories);
         }
-        [HttpGet("categories/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(Guid id)
         {
            
-                Category category = await categoryReposatry.GetById(id);
+            Category category = await categoryReposatry.GetById(id);
+            CategoryInfoDTO categoryInfo = new CategoryInfoDTO { Id = category.Id, Name = category.Name };
                 if ( category != null)
-                    return Ok(category);
+                    return Ok(categoryInfo);
             return BadRequest($"غير موجود {id}");
 
         }
-        [HttpPost]
+        [HttpPost("addNew")]
         public async Task<IActionResult> AddCategory(CategoryCreateDTO categoryDto)
         {
             if (ModelState.IsValid)
@@ -56,7 +57,7 @@ namespace noone.Controllers
                 return BadRequest(ModelState);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditCategory(Guid id,AddcategoryDTO categoryDto)
+        public async Task<IActionResult> EditCategory(Guid id,CategoryCreateDTO categoryDto)
         {
             
             if (ModelState.IsValid)

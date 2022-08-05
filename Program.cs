@@ -31,7 +31,6 @@ namespace noone
             builder.Services.AddScoped<IReposatory<Category>, CategoryReposatory>();
           
 
-
             //configer JWT
 
             builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
