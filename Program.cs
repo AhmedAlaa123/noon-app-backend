@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using noone.Helpers;
 using noone.Models;
+using noone.Reposatories;
+using noone.Reposatories.SubCategoryReposatory;
 
 using noone.Reposatories.CateegoryReposatory;
 
@@ -27,9 +29,20 @@ namespace noone
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
             //  Register Category Reposatory
             builder.Services.AddScoped<IReposatory<Category>, CategoryReposatory>();
           
+
+
+            //add custom sevices
+            builder.Services.AddScoped<IReposatory<SubCategory>, SubCategoryReposatory>();
+
+
+          
+
+            // add dbcontext to service
+
 
             //configer JWT
 
