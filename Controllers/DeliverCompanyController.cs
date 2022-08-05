@@ -64,7 +64,7 @@ namespace noone.Controllers
         //Edit Company 
 
         [HttpPost("UpdateDeliverCompany")]
-        //[HttpPut("{token:alpha}/{id}")]
+        [HttpPut("{token:alpha}/{id}")]
         public async Task<IActionResult> UpdateDeliverCompany( string token, [FromBody] DeliverCompanyCreateDTO deliverCompany ,  Guid id)   
         {
             if (!ModelState.IsValid)
