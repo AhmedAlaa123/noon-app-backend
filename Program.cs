@@ -90,7 +90,7 @@ namespace noone
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            
+     
             app.UseAuthentication();
             app.UseAuthorization();
 
