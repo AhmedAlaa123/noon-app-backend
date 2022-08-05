@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using noone.DTO.categoryDTO;
+
 using noone.Models;
 
 namespace noone.Reposatories.CateegoryReposatory
