@@ -55,30 +55,27 @@ namespace noone.Controllers
         }
         //Add  SupCategories
         [HttpPost]
-        public async Task<IActionResult> AddSupcategory(SubCategoryCreateDTO createDTO)
+        public async Task<IActionResult> AddSupcategory([FromForm]SubCategoryCreateDTO createDTO)
         {
             SubCategory sub = new SubCategory();
             if(ModelState.IsValid)
             {
 
+               
+
                 string uploadimg = Path.Combine(env.WebRootPath, "images/subCategoryImages");
-
-                //string uploadimg = Path.Combine(env.WebRootPath, "images/subCategoryImages");
-
-                //string uniqe = Guid.NewGuid().ToString() + "_" + createDTO.Image.FileName;
-                //string pathfile = Path.Combine(uploadimg, uniqe);
-                //using (var filestream = new FileStream(pathfile, FileMode.Create))
-                //{
-                //    createDTO.Image.CopyTo(filestream);
-                //    filestream.Close();
-                //}
+                string uniqe = Guid.NewGuid().ToString() + "_" + createDTO.Image.FileName;
+                string pathfile = Path.Combine(uploadimg, uniqe);
+                using (var filestream = new FileStream(pathfile, FileMode.Create))
+                {
+                    createDTO.Image.CopyTo(filestream);
+                    filestream.Close();
+                }
                 sub.Name = createDTO.Name;
 
-                sub.Image = createDTO.Image;
+                sub.Image = pathfile;
               //  sub.Category_Id = createDTO.Category_Id;
 
-                
-              
                 bool isIsAdded=await reposatory.Insert(sub);
                 if (!isIsAdded)
                     return BadRequest("حدث خطأ اعد المحاوله");
@@ -91,15 +88,25 @@ namespace noone.Controllers
 
         //update subcategory
         [HttpPut("{ID}")]
-        public async Task<IActionResult> Update([FromRoute] Guid ID, SubCategoryInfoDTO createDTO)
+        public async Task<IActionResult> Update([FromRoute] Guid ID,[FromForm] SubCategoryUpdateDTO createDTO)
         {
             if (ModelState.IsValid)
             {
-                SubCategory subCategoryy = new SubCategory()
+                SubCategory subCategoryy = new SubCategory();
+                if(createDTO.SubCategoryImage != null)
                 {
-                    Name=createDTO.SubCategoryName,
-                    Image=createDTO.SubCategoryImage
-                };
+                    string uploadimg = Path.Combine(env.WebRootPath, "images/subCategoryImages");
+                    string uniqe = Guid.NewGuid().ToString() + "_" + createDTO.SubCategoryImage.FileName;
+                    string pathfile = Path.Combine(uploadimg, uniqe);
+                    using (var filestream = new FileStream(pathfile, FileMode.Create))
+                    {
+                        createDTO.SubCategoryImage.CopyTo(filestream);
+                        filestream.Close();
+                    }
+                    subCategoryy.Image = pathfile;
+
+                }
+                subCategoryy.Name=createDTO.SubCategoryName;
 
                 bool isUpdate = await reposatory.Update(ID, subCategoryy);
                 if (!isUpdate)

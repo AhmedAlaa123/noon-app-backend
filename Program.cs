@@ -27,7 +27,14 @@ namespace noone
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            //add cors policy
+            builder.Services.AddCors(corsoptions =>
+            {
+                corsoptions.AddPolicy("Mypolicy", corsploicy =>
+                {
+                    corsploicy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                });
+            });
             //  Register Category Reposatory
             builder.Services.AddScoped<IReposatory<Category>, CategoryReposatory>();
             // Register DeliverComponyReposatory
@@ -92,7 +99,8 @@ namespace noone
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-     
+            app.UseStaticFiles();
+            app.UseCors("Mypolicy");
             app.UseAuthentication();
             app.UseAuthorization();
 

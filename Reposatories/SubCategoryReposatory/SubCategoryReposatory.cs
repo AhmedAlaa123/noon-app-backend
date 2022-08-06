@@ -73,7 +73,10 @@ namespace noone.Reposatories.SubCategoryReposatory
             try
             {
                 Oldone.Name = subCategory.Name;
+                if(subCategory.Image!=null)
+                {
                 Oldone.Image = subCategory.Image;
+                }
                 Oldone.Category_Id = subCategory.Category_Id;
                 Oldone.Products = subCategory.Products;
                await this.noonEntities.SaveChangesAsync();

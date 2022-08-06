@@ -9,7 +9,7 @@ namespace noone.ApplicationDTO.CompanyDTO
 
         [Required(ErrorMessage = "رقم الهاتف مطلوب"), StringLength(11, ErrorMessage = "رقم الهاتف يجب ان يكن 11 رقم"), RegularExpression("^[0-9]{11}$")]
         public string ContactNumber { get; set; }
-
-        public string BrandImage { get; set; }  
+        [Required(ErrorMessage = "من فضلك ادخل الصورة")]
+        public IFormFile BrandImage { get; set; }  
     }
 }

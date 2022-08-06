@@ -13,7 +13,7 @@ namespace noone.Models
         [Required, MinLength(3)]
         public string Name { get; set; }
 
-        public string? Image { get; set; }
+        public string Image { get; set; }
 
         [ForeignKey("Category")]
         public Guid? Category_Id { get; set; }
