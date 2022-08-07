@@ -3,7 +3,7 @@ using noone.Models;
 
 namespace noone.Reposatories.OrderReposatory
 {
-    public class OrderReposatory //: IReposatory<Order>
+    public class OrderReposatory : IReposatory<Order>
     {
         private readonly NoonEntities _noonEntities;
 
