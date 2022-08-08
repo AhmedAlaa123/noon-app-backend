@@ -5,6 +5,7 @@ using noone.Contstants;
 using noone.Helpers;
 using noone.Models;
 using noone.Reposatories;
+using noone.Reposatories.OrderReposatory;
 
 namespace noone.Controllers
 {
@@ -27,18 +28,28 @@ namespace noone.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             // check if user is Admin Or Employee
-            if (!string.IsNullOrEmpty(await CheckUseIsAdminOrEmployee(token)))
-                return Unauthorized(await CheckUseIsAdminOrEmployee(token));
+            //if (!string.IsNullOrEmpty(await CheckUseIsAdminOrEmployee(token)))
+            //    return Unauthorized(await CheckUseIsAdminOrEmployee(token));
+            var jwtSecurity = TokenConverter.ConvertToken(token);
+            if (jwtSecurity is null)
+                return BadRequest(" غير مسموح لك الاضافه");
+            var user = await this._useManger.FindByNameAsync(jwtSecurity.Subject);
+            if (user is null)
+                return BadRequest("المستخدم غير مجود");
             Order ord = new Order
             {
                 DeliverDate = order.DeliverDate,
-                OrderDate = order.OrderDate
+                OrderDate = order.OrderDate,
+                UserId=user.Id
+                
 
             };
 
             bool isInserted = await this._order.Insert(ord);
+            var orderRepo = (OrderReposatory)this._order;
+            bool productIsAdded = await orderRepo.AddProductsToOrder(order.Products);
 
-            if (!isInserted)
+            if (!isInserted||!productIsAdded)
                 return BadRequest("لم يتم الاضافه اعد المحاوله");
 
             return Ok(ord);
@@ -50,7 +61,7 @@ namespace noone.Controllers
         {
             var jwtSecurity = TokenConverter.ConvertToken(Token);
             if (jwtSecurity is null)
-                return " غير مسموح لك الاضافه32";
+                return " غير مسموح لك الاضافه";
 
             var user = await this._useManger.FindByNameAsync(jwtSecurity.Subject);
             if (user is null || !await this._useManger.IsInRoleAsync(user, Roles.ADMIN_ROLE) && !await this._useManger.IsInRoleAsync(user, Roles.EMPLOYEE_ROLE))
@@ -62,13 +73,14 @@ namespace noone.Controllers
 
 
         [HttpPut("edit/{token}/{id}")]
-        public async Task<IActionResult> UpdateDeliverCompany([FromRoute] string token, [FromBody] OrderCreateDTO ord, [FromRoute] Guid id)
+        public async Task<IActionResult> UpdateOrder([FromRoute] string token, [FromBody] OrderCreateDTO ord, [FromRoute] Guid id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             // check if user is Admin Or Employee
-            if (!string.IsNullOrEmpty(await CheckEditIsAdminOrEmployee(token)))
-                return Unauthorized(await CheckEditIsAdminOrEmployee(token));
+            string message = await CheckEditIsAdminOrEmployee(token);
+            if (!string.IsNullOrEmpty(message))
+                return Unauthorized(message);
 
             Order Updatedorder = new Order
             {
@@ -99,6 +111,24 @@ namespace noone.Controllers
         }
 
 
+       // delete Order
+       [HttpDelete("{orderId}")]
+        public async Task<IActionResult> CancelOrder([FromRoute] Guid id)
+        {
+            if (id == null||! await this._order.Delete(id))
+                return BadRequest("رقم الطلب غير صالح");
+            return Ok("تم الغاء الطلب");
+        }
+
+        [HttpGet("{token}")]
+        public async Task<IActionResult> GetAllOrders(string token)
+        {
+            string message = await CheckEditIsAdminOrEmployee(token);
+            if (!string.IsNullOrEmpty(message))
+                return Unauthorized(message);
+
+            return Ok(await this._order.GetAll());
+        }
 
 
     }

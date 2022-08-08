@@ -11,7 +11,7 @@ using noone.Reposatories.AuthenticationReposatory;
 using noone.Reposatories.DeliverCompanyReposatory;
 
 using System.Text;
-
+using noone.Reposatories.OrderReposatory;
 
 namespace noone
 {
@@ -32,12 +32,11 @@ namespace noone
             builder.Services.AddScoped<IReposatory<Category>, CategoryReposatory>();
             // Register DeliverComponyReposatory
             builder.Services.AddScoped<IReposatory<DeliverCompany>, DeliverComponyReposatory>();
-
-
             //add custom sevices
             builder.Services.AddScoped<IReposatory<SubCategory>, SubCategoryReposatory>();
 
-
+            // Register OrderRposatory
+            builder.Services.AddScoped<IReposatory<Order>, OrderReposatory>();
           
 
             // add dbcontext to service

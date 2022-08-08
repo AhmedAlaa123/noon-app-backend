@@ -1,4 +1,5 @@
-﻿using noone.CustomAttributes;
+﻿using noone.ApplicationDTO.ProductDTO;
+using noone.CustomAttributes;
 using System.ComponentModel.DataAnnotations;
 
 namespace noone.ApplicationDTO.OrderDTO
@@ -12,6 +13,7 @@ namespace noone.ApplicationDTO.OrderDTO
         [DataType(DataType.DateTime)]
         public DateTime OrderDate { get; set; }
 
+        public List<ProductOrderCreateDTO> Products { get; set; }
 
 
     }
