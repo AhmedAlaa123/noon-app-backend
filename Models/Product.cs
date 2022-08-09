@@ -33,7 +33,7 @@ namespace noone.Models
 
         public SubCategory SucCategory { get; set; }
 
-        public ICollection<ProductImage> ProductImages { get; set; }
+        public ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
         public ICollection<ProductOrder> ProductOrders { get; set; }
         public ICollection<UserProductRate> UserProductRates { get; set; }
 
