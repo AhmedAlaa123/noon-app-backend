@@ -6,18 +6,23 @@ namespace noone.Reposatories.OrderReposatory
 {
     public class OrderReposatory : IReposatory<Order>
     {
+        private readonly IReposatory<Bill> _billReposatory;
         private readonly NoonEntities _noonEntities;
         private Guid OrderID { get; set; }
-        public OrderReposatory(NoonEntities noonEntities)
+        public OrderReposatory(NoonEntities noonEntities, 
+            IReposatory<Bill> billReposatory)
         {
             this._noonEntities = noonEntities;
+            this._billReposatory = billReposatory;
         }
 
         public async Task<bool> AddProductsToOrder(List<ProductOrderCreateDTO> products)
         {
             try
             {
+
                 // add products to order
+                double BillPrice = 0.0;
                 foreach(var pro in products)
                 {
                     await this._noonEntities.ProductOrders.AddAsync(
@@ -27,8 +32,23 @@ namespace noone.Reposatories.OrderReposatory
                                 Order_Id = this.OrderID
                             }
                         ) ;
+
                     await this._noonEntities.SaveChangesAsync();
+                    Product product = await this._noonEntities.Products.FirstOrDefaultAsync(p => p.Id == pro.ProductId);
+                    if (product != null)
+                        BillPrice += product.Price;
                 }
+
+                // create Bill
+                Bill newBill = new Bill
+                {
+                    Price = BillPrice,
+                    Order_Id=this.OrderID
+                };
+                //add Bill in Bills List
+                await this._noonEntities.Bills.AddAsync(newBill);
+                // Save Changes in the database
+                await this._noonEntities.SaveChangesAsync();
             }
             catch
             {

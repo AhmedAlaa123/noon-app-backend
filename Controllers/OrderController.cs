@@ -16,10 +16,12 @@ namespace noone.Controllers
         private readonly UserManager<ApplicationUser> _useManger;
         private readonly IReposatory<Order> _order;
 
+
         public OrderController(UserManager<ApplicationUser> useManger, IReposatory<Order> orderReposatory)
         {
             this._useManger = useManger;
             this._order = orderReposatory;
+      
         }
 
         [HttpPost("AddNew")]
@@ -48,9 +50,11 @@ namespace noone.Controllers
             bool isInserted = await this._order.Insert(ord);
             var orderRepo = (OrderReposatory)this._order;
             bool productIsAdded = await orderRepo.AddProductsToOrder(order.Products);
-
+            
             if (!isInserted||!productIsAdded)
                 return BadRequest("لم يتم الاضافه اعد المحاوله");
+
+            // create Bill
 
             return Ok(ord);
 
