@@ -24,7 +24,7 @@ namespace noone.Controllers
 
 
         [HttpPost("AddNew")]
-        public async Task<IActionResult> AddNew(string token, CompanyCreateDTO Company)
+        public async Task<IActionResult> AddNew(string token,[FromForm] CompanyCreateDTO Company)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -111,7 +111,7 @@ namespace noone.Controllers
 
 
         [HttpPut("edit/{token}/{id}")]
-        public async Task<IActionResult> UpdateCompany([FromRoute] string token, [FromBody] CompanyCreateDTO Company, [FromRoute] Guid id)
+        public async Task<IActionResult> UpdateCompany([FromRoute] string token, [FromForm] CompanyCreateDTO Company, [FromRoute] Guid id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
