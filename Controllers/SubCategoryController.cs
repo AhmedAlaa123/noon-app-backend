@@ -88,15 +88,25 @@ namespace noone.Controllers
 
         //update subcategory
         [HttpPut("{ID}")]
-        public async Task<IActionResult> Update([FromRoute] Guid ID, SubCategoryInfoDTO createDTO)
+        public async Task<IActionResult> Update([FromRoute] Guid ID, [FromRoute] )
         {
             if (ModelState.IsValid)
             {
-                SubCategory subCategoryy = new SubCategory()
+                SubCategory subCategoryy = new SubCategory();
+                if (createDTO.SubCategoryImage != null)
                 {
-                    Name=createDTO.SubCategoryName,
-                    Image=createDTO.SubCategoryImage
-                };
+                    string uploadimg = Path.Combine(env.WebRootPath, "images/subCategoryImages");
+                    string uniqe = Guid.NewGuid().ToString() + "_" + createDTO.SubCategoryImage.FileName;
+                    string pathfile = Path.Combine(uploadimg, uniqe);
+                    using (var filestream = new FileStream(pathfile, FileMode.Create))
+                    {
+                        createDTO.SubCategoryImage.CopyTo(filestream);
+                        filestream.Close();
+                    }
+                    subCategoryy.Image = pathfile;
+
+                }
+                subCategoryy.Name = createDTO.SubCategoryName;
 
                 bool isUpdate = await reposatory.Update(ID, subCategoryy);
                 if (!isUpdate)
