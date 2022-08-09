@@ -62,7 +62,10 @@ namespace noone.Reposatories.CompanyReposatory
                     return false;
                 Company.Name = Item.Name;
                 Company.ContactNumber = Item.ContactNumber;
+                if(Item.BrandImage!=null)
+                {
                 Company.BrandImage = Item.BrandImage;
+                }
 
                 await this._noonEntities.SaveChangesAsync();
 
