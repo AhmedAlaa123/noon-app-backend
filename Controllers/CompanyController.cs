@@ -15,11 +15,12 @@ namespace noone.Controllers
     {
         private readonly UserManager<ApplicationUser> _useManger;
         private readonly IReposatory<Company> _CompanyReposatory;
-
-        public CompanyController(UserManager<ApplicationUser> useManger, IReposatory<Company> CompanyReposatory)
+        IWebHostEnvironment env;
+        public CompanyController(UserManager<ApplicationUser> useManger, IReposatory<Company> CompanyReposatory, IWebHostEnvironment env)
         {
             this._useManger = useManger;
             this._CompanyReposatory = CompanyReposatory;
+            this.env = env;
         }
 
 
@@ -31,12 +32,20 @@ namespace noone.Controllers
             // check if user is Admin Or Employee
             if (!string.IsNullOrEmpty(await CheckUseIsAdminOrEmployee(token)))
                 return Unauthorized(await CheckUseIsAdminOrEmployee(token));
-            Company company = new Company
+            Company company = new Company();
+            string uploadimg = Path.Combine(env.WebRootPath, "images/subCategoryImages");
+            string uniqe = Guid.NewGuid().ToString() + "_" + Company.BrandImage.FileName;
+            string pathfile = Path.Combine(uploadimg, uniqe);
+            using (var filestream = new FileStream(pathfile, FileMode.Create))
             {
-                Name = Company.Name,
-                ContactNumber = Company.ContactNumber,
-                BrandImage = Company.BrandImage
-            };
+                Company.BrandImage.CopyTo(filestream);
+                filestream.Close();
+            }
+            company.Name = Company.Name;
+
+            company.BrandImage= pathfile;
+            company.ContactNumber = Company.ContactNumber;
+
 
             bool isInserted = await this._CompanyReposatory.Insert(company);
 
@@ -120,11 +129,7 @@ namespace noone.Controllers
                 return Unauthorized(await CheckEditIsAdminOrEmployee(token));
 
             Company UpdatedCompany = new Company
-            {
-                Name =Company.Name, 
-                ContactNumber = Company.ContactNumber,
-                BrandImage=Company.BrandImage
-            };
+           
             bool isUpdated = await this._CompanyReposatory.Update(id, UpdatedCompany);
 
 

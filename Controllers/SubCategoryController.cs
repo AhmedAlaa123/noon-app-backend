@@ -61,14 +61,21 @@ namespace noone.Controllers
             if(ModelState.IsValid)
             {
 
-              
+                string uploadimg = Path.Combine(env.WebRootPath, "images/subCategoryImages");
+                string uniqe = Guid.NewGuid().ToString() + "_" + createDTO.Image.FileName;
+                string pathfile = Path.Combine(uploadimg, uniqe);
+                using (var filestream = new FileStream(pathfile, FileMode.Create))
+                {
+                    createDTO.Image.CopyTo(filestream);
+                    filestream.Close();
+                }
                 sub.Name = createDTO.Name;
 
-                sub.Image = createDTO.Image;
-              //  sub.Category_Id = createDTO.Category_Id;
+                sub.Image = pathfile;
+                //  sub.Category_Id = createDTO.Category_Id;
 
-                
-              
+
+
                 bool isIsAdded=await reposatory.Insert(sub);
                 if (!isIsAdded)
                     return BadRequest("حدث خطأ اعد المحاوله");
