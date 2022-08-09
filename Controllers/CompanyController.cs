@@ -35,7 +35,7 @@ namespace noone.Controllers
                 return Unauthorized(await CheckUseIsAdminOrEmployee(token));
             //upload image
             string uploadimg = Path.Combine(env.WebRootPath, "images/CompaniesImages");
-            string uniqe = Guid.NewGuid().ToString() + "_" + Company.BrandImage.FileName;
+            string uniqe = Guid.NewGuid().ToString() + "_" + Company.BrandImage.FileName; ;
             string pathfile = Path.Combine(uploadimg, uniqe);
             using (var filestream = new FileStream(pathfile, FileMode.Create))
             {
