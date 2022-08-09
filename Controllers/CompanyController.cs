@@ -16,6 +16,7 @@ namespace noone.Controllers
         private readonly UserManager<ApplicationUser> _useManger;
         private readonly IReposatory<Company> _CompanyReposatory;
         IWebHostEnvironment env;
+
         public CompanyController(UserManager<ApplicationUser> useManger, IReposatory<Company> CompanyReposatory, IWebHostEnvironment env)
         {
             this._useManger = useManger;
@@ -25,27 +26,28 @@ namespace noone.Controllers
 
 
         [HttpPost("AddNew")]
-        public async Task<IActionResult> AddNew(string token,[FromForm] CompanyCreateDTO Company)
+        public async Task<IActionResult> AddNew(string token, [FromForm] CompanyCreateDTO Company)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             // check if user is Admin Or Employee
             if (!string.IsNullOrEmpty(await CheckUseIsAdminOrEmployee(token)))
                 return Unauthorized(await CheckUseIsAdminOrEmployee(token));
-            Company company = new Company();
-            string uploadimg = Path.Combine(env.WebRootPath, "images/subCategoryImages");
-            string uniqe = Guid.NewGuid().ToString() + "_" + Company.BrandImage.FileName;
+            //upload image
+            string uploadimg = Path.Combine(env.WebRootPath, "images/CompaniesImages");
+            string uniqe = Guid.NewGuid().ToString() + "_" + Company.BrandImage.FileName; ;
             string pathfile = Path.Combine(uploadimg, uniqe);
             using (var filestream = new FileStream(pathfile, FileMode.Create))
             {
                 Company.BrandImage.CopyTo(filestream);
                 filestream.Close();
             }
-            company.Name = Company.Name;
-
-            company.BrandImage= pathfile;
-            company.ContactNumber = Company.ContactNumber;
-
+            Company company = new Company
+            {
+                Name = Company.Name,
+                ContactNumber = Company.ContactNumber,
+                BrandImage = pathfile
+            };
 
             bool isInserted = await this._CompanyReposatory.Insert(company);
 
@@ -98,7 +100,7 @@ namespace noone.Controllers
                 Id = company.Id,
                 Name = company.Name,
                 ContactNumber = company.ContactNumber,
-                BrandImage=company.BrandImage
+                BrandImage = company.BrandImage
             };
 
             return Ok(Company);
@@ -120,7 +122,7 @@ namespace noone.Controllers
 
 
         [HttpPut("edit/{token}/{id}")]
-        public async Task<IActionResult> UpdateCompany([FromRoute] string token, [FromForm] CompanyCreateDTO Company, [FromRoute] Guid id)
+        public async Task<IActionResult> UpdateCompany([FromRoute] string token, [FromForm] CompanyUpdatedto company, [FromRoute] Guid id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -128,8 +130,23 @@ namespace noone.Controllers
             if (!string.IsNullOrEmpty(await CheckEditIsAdminOrEmployee(token)))
                 return Unauthorized(await CheckEditIsAdminOrEmployee(token));
 
-            Company UpdatedCompany = new Company
-           
+            Company UpdatedCompany = new Company();
+            if (company.BrandImage != null)
+            {
+                //upload image
+                string uploadimg = Path.Combine(env.WebRootPath, "images/CompaniesImages");
+                string uniqe = Guid.NewGuid().ToString() + "_" + company.BrandImage.FileName;
+                string pathfile = Path.Combine(uploadimg, uniqe);
+                using (var filestream = new FileStream(pathfile, FileMode.Create))
+                {
+                    company.BrandImage.CopyTo(filestream);
+                    filestream.Close();
+                }
+                UpdatedCompany.BrandImage = pathfile;
+            }
+            UpdatedCompany.Name = company.Name;
+            UpdatedCompany.ContactNumber = company.ContactNumber;
+
             bool isUpdated = await this._CompanyReposatory.Update(id, UpdatedCompany);
 
 
@@ -137,7 +154,7 @@ namespace noone.Controllers
             if (!isUpdated)
                 return BadRequest("لم يتم التعديل اعد المحاوله");
 
-            return Ok(Company);
+            return Ok(company);
 
 
 
