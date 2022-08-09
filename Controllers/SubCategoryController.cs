@@ -88,7 +88,7 @@ namespace noone.Controllers
 
         //update subcategory
         [HttpPut("{ID}")]
-        public async Task<IActionResult> Update([FromRoute] Guid ID, [FromRoute] )
+        public async Task<IActionResult> Update([FromRoute] Guid ID, [FromRoute] SubCategoryUpdateDTO createDTO)
         {
             if (ModelState.IsValid)
             {
