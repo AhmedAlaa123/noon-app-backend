@@ -84,6 +84,15 @@ namespace noone
                   };
               });
 
+            // configer core policy
+            builder.Services.AddCors(corsOptions =>
+            {
+                corsOptions.AddPolicy("NoonPolicy", corsPolicyBuilder =>
+                {
+                    corsPolicyBuilder.AllowAnyOrigin();
+                });
+            });
+
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -91,7 +100,7 @@ namespace noone
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-     
+            app.UseCors("NoonPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
 
