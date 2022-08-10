@@ -14,7 +14,6 @@ namespace noone.CustomAttributes
                 Company comp = this.context.Companies.FirstOrDefault(c => c.Name == (value.ToString().Trim()));
                 if (comp == null)
                     return ValidationResult.Success;
-
                 return new ValidationResult("اسم الشركة موجود يجب ان يكون الاسم مميزا ");
             }
             return new ValidationResult("ادخل اسم الشركة");
