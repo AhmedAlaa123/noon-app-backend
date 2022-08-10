@@ -53,7 +53,7 @@ namespace noone
             // add dbcontext to service--
 
             //get connection string
-            string connectionString = builder.Configuration.GetConnectionString("Mona");
+            string connectionString = builder.Configuration.GetConnectionString("Ahmed Alaa");
             builder.Services.AddDbContext<NoonEntities>(optionsBuilde =>
             {
                 optionsBuilde.UseSqlServer(connectionString);
@@ -85,11 +85,13 @@ namespace noone
               });
 
             // configer core policy
+            
             builder.Services.AddCors(corsOptions =>
             {
+                
                 corsOptions.AddPolicy("NoonPolicy", corsPolicyBuilder =>
                 {
-                    corsPolicyBuilder.AllowAnyOrigin();
+                    corsPolicyBuilder.WithOrigins("*").AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                 });
             });
 
@@ -103,7 +105,8 @@ namespace noone
             app.UseCors("NoonPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
-
+            
+            
             app.MapControllers();
 
             app.Run();

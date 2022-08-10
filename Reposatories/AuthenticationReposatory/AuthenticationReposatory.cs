@@ -111,7 +111,7 @@ namespace noone.Reposatories.AuthenticationReposatory
             // check first on existing user then check password matching 
             if (User is null || !await _userManger.CheckPasswordAsync(User, userSignInDTO.Password))
             {
-                AuthModel.Message = "اسم المستخدم او كلمة المرور غير متاحة ";
+                AuthModel.Message = "اسم المستخدم او كلمة المرور غير صحيح * ";
                 return AuthModel;
             }
             var jwtsecurityToken = await CreateJwtToken(User);
