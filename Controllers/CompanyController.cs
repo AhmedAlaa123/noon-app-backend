@@ -26,7 +26,7 @@ namespace noone.Controllers
 
 
         [HttpPost("AddNew")]
-        public async Task<IActionResult> AddNew(string token,[FromForm] CompanyCreateDTO Company)
+        public async Task<IActionResult> AddNew(string token, [FromForm] CompanyCreateDTO Company)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -129,13 +129,29 @@ namespace noone.Controllers
             // check if user is Admin Or Employee
             if (!string.IsNullOrEmpty(await CheckEditIsAdminOrEmployee(token)))
                 return Unauthorized(await CheckEditIsAdminOrEmployee(token));
-
-            Company UpdatedCompany = new Company
+           
+            Company UpdatedCompany = new Company();
+            if (company.BrandImage != null)
             {
-                Name =Company.Name, 
-                ContactNumber = Company.ContactNumber,
-                BrandImage=Company.BrandImage
-            };
+
+                //upload image
+                string uploadimg = Path.Combine(env.WebRootPath, "images/CompaniesImages");
+                string uniqe = Guid.NewGuid().ToString() + "_" + company.BrandImage.FileName;
+                string pathfile = Path.Combine(uploadimg, uniqe);
+                using (var filestream = new FileStream(pathfile, FileMode.Create))
+                {
+                    company.BrandImage.CopyTo(filestream);
+                    filestream.Close();
+                }
+                UpdatedCompany.BrandImage = pathfile;
+            }
+            UpdatedCompany.Name = company.Name;
+            UpdatedCompany.ContactNumber = company.ContactNumber;
+
+
+              
+           
+
             bool isUpdated = await this._CompanyReposatory.Update(id, UpdatedCompany);
 
 

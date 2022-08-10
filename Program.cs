@@ -48,11 +48,9 @@ namespace noone
             //add custom sevices
             builder.Services.AddScoped<IReposatory<Company>, ComponyReposatory>();
 
-
-
             //add custom sevices
             builder.Services.AddScoped<IReposatory<SubCategory>, SubCategoryReposatory>();
-
+            builder.Services.AddScoped<IReposatory<Bill>, BillReposatory>();
 
 
 
@@ -80,13 +78,14 @@ namespace noone
             // Add Authentication
             builder.Services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme   = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme      = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme               = JwtBearerDefaults.AuthenticationScheme;
             })
               .AddJwtBearer(o =>
               {
                   o.RequireHttpsMetadata = false;
-                  o.SaveToken = false;
+                  o.SaveToken = true;
                   o.TokenValidationParameters = new TokenValidationParameters
                   {
                       ValidateIssuerSigningKey = true,
@@ -117,7 +116,7 @@ namespace noone
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-     
+            app.UseCors("NoonPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
             
