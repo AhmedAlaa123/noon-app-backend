@@ -11,7 +11,8 @@ using noone.Reposatories.AuthenticationReposatory;
 using noone.Reposatories.DeliverCompanyReposatory;
 
 using System.Text;
-using noone.Reposatories.CompanyReposatory;
+using noone.Reposatories.OrderReposatory;
+using noone.Reposatories.BillReposatory;
 
 namespace noone
 {
@@ -39,15 +40,11 @@ namespace noone
             builder.Services.AddScoped<IReposatory<Category>, CategoryReposatory>();
             // Register DeliverComponyReposatory
             builder.Services.AddScoped<IReposatory<DeliverCompany>, DeliverComponyReposatory>();
-
-
             //add custom sevices
             builder.Services.AddScoped<IReposatory<SubCategory>, SubCategoryReposatory>();
 
-            //add custom sevices
-            builder.Services.AddScoped<IReposatory<Company>, ComponyReposatory>();
 
-
+          
 
             // add dbcontext to service
 
@@ -61,7 +58,7 @@ namespace noone
             // add dbcontext to service--
 
             //get connection string
-            string connectionString = builder.Configuration.GetConnectionString("Mona");
+            string connectionString = builder.Configuration.GetConnectionString("Ahmed Alaa");
             builder.Services.AddDbContext<NoonEntities>(optionsBuilde =>
             {
                 optionsBuilde.UseSqlServer(connectionString);
@@ -92,6 +89,17 @@ namespace noone
                   };
               });
 
+            // configer core policy
+            
+            builder.Services.AddCors(corsOptions =>
+            {
+                
+                corsOptions.AddPolicy("NoonPolicy", corsPolicyBuilder =>
+                {
+                    corsPolicyBuilder.WithOrigins("*").AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                });
+            });
+
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -99,11 +107,11 @@ namespace noone
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseStaticFiles();
-            app.UseCors("Mypolicy");
+     
             app.UseAuthentication();
             app.UseAuthorization();
-
+            
+            
             app.MapControllers();
 
             app.Run();

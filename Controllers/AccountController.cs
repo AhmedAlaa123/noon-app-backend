@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using noone.ApplicationDTO.ApplicationUserDTO;
 using noone.Reposatories.AuthenticationReposatory;
@@ -30,7 +31,7 @@ namespace noone.Controllers
             if (!result.IsAuthenticated)
                 return BadRequest(result.Message);
 
-            return Ok(result);
+            return Ok(new {Token=result.Token});
         }
        
         [HttpPost("SignOut")]
@@ -52,10 +53,11 @@ namespace noone.Controllers
             {
                 return BadRequest(authentcationModel.Message);
             }
-            return Ok(authentcationModel);
+            return Ok(new {Token= authentcationModel.Token});
         }
 
         [HttpPost("addRole")]
+        //[Authorize]
         public async Task<IActionResult> AddRole(ApplicationUserAddRoleDTO userAddRoleDTO)
         {
             if (!ModelState.IsValid)
