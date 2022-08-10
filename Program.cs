@@ -16,7 +16,8 @@ using System.Text;
 
 using noone.Reposatories.OrderReposatory;
 using noone.Reposatories.BillReposatory;
-
+using noone.Reposatories.ProductReposatory;
+using noone.Reposatories.CompanyReposatory;
 
 namespace noone
 {
