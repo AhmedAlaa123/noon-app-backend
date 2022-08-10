@@ -269,7 +269,7 @@ namespace noone.Reposatories.AuthenticationReposatory
                  issuer: _jwt.Issuer,
                  audience: _jwt.Audience,
                   claims: claims,
-                 expires: DateTime.Now.AddDays(_jwt.DurationInDays),
+                 expires: DateTime.Now.AddMinutes(_jwt.DurationInDays),
                  signingCredentials: signingCredentials);
             return jwtSecurityToken;
 
