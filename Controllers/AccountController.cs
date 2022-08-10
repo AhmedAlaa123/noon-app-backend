@@ -31,7 +31,7 @@ namespace noone.Controllers
             if (!result.IsAuthenticated)
                 return BadRequest(result.Message);
 
-            return Ok(new {Token=result.Token});
+            return Ok(new {Token=result.Token,Expiration=result.ExpiresOn});
         }
        
         [HttpPost("SignOut")]
@@ -53,7 +53,9 @@ namespace noone.Controllers
             {
                 return BadRequest(authentcationModel.Message);
             }
-            return Ok(new {Token= authentcationModel.Token});
+
+            return Ok(new { Token = authentcationModel.Token, Expiration = authentcationModel.ExpiresOn });
+       
         }
 
         [HttpPost("addRole")]

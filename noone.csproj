@@ -29,7 +29,6 @@
     <Folder Include="wwwroot\images\ProductsImages\" />
     <Folder Include="wwwroot\images\SiteImages\" />
     <Folder Include="wwwroot\images\subCategoryImages\" />
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using noone.Helpers;
 using noone.Models;
-<<<<<<< HEAD
-=======
+<<<<<<<<< Temporary merge branch 1
 <<<<<<< Updated upstream
 =======
->>>>>>> ProductController
+=========
+>>>>>>>>> Temporary merge branch 2
 using noone.Reposatories;
 using noone.Reposatories.SubCategoryReposatory;
 using noone.Reposatories.CateegoryReposatory;
@@ -16,14 +16,14 @@ using noone.Reposatories.AuthenticationReposatory;
 using noone.Reposatories.DeliverCompanyReposatory;
 
 using System.Text;
-<<<<<<< HEAD
-using noone.Reposatories.OrderReposatory;
-using noone.Reposatories.BillReposatory;
-=======
+<<<<<<<<< Temporary merge branch 1
 using noone.Reposatories.CompanyReposatory;
 using noone.Reposatories.ProductReposatory;
 >>>>>>> Stashed changes
->>>>>>> ProductController
+=========
+using noone.Reposatories.OrderReposatory;
+using noone.Reposatories.BillReposatory;
+>>>>>>>>> Temporary merge branch 2
 
 namespace noone
 {
@@ -39,20 +39,13 @@ namespace noone
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-<<<<<<< Updated upstream
-=======
-            //add cors policy
-            builder.Services.AddCors(corsoptions =>
-            {
-                corsoptions.AddPolicy("Mypolicy", corsploicy =>
-                {
-                    corsploicy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-                });
-            });
+
+          
             //  Register Category Reposatory
             builder.Services.AddScoped<IReposatory<Category>, CategoryReposatory>();
             // Register DeliverComponyReposatory
             builder.Services.AddScoped<IReposatory<DeliverCompany>, DeliverComponyReposatory>();
+
             builder.Services.AddScoped<IProductReposatory, ProductRepostory>();
 
             //add custom sevices
@@ -61,20 +54,11 @@ namespace noone
             //add custom sevices
             builder.Services.AddScoped<IReposatory<Company>, ComponyReposatory>();
 
-
->>>>>>> Stashed changes
-
-            //  Register Category Reposatory
-            builder.Services.AddScoped<IReposatory<Category>, CategoryReposatory>();
-            // Register DeliverComponyReposatory
-            builder.Services.AddScoped<IReposatory<DeliverCompany>, DeliverComponyReposatory>();
             //add custom sevices
             builder.Services.AddScoped<IReposatory<SubCategory>, SubCategoryReposatory>();
-
-            // Register OrderRposatory
-            builder.Services.AddScoped<IReposatory<Order>, OrderReposatory>();
-            // Register BillReposatory
             builder.Services.AddScoped<IReposatory<Bill>, BillReposatory>();
+
+
 
             // add dbcontext to service
 
@@ -100,13 +84,14 @@ namespace noone
             // Add Authentication
             builder.Services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme   = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme      = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme               = JwtBearerDefaults.AuthenticationScheme;
             })
               .AddJwtBearer(o =>
               {
                   o.RequireHttpsMetadata = false;
-                  o.SaveToken = false;
+                  o.SaveToken = true;
                   o.TokenValidationParameters = new TokenValidationParameters
                   {
                       ValidateIssuerSigningKey = true,

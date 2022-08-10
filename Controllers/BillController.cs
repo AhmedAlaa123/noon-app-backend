@@ -2,6 +2,9 @@
 using noone.Models;
 using noone.Reposatories;
 using noone.ApplicationDTO.BillDTO;
+using Microsoft.AspNetCore.Authorization;
+using noone.Contstants;
+
 namespace noone.Controllers
 {
     [Route("api/[controller]")]
@@ -14,6 +17,7 @@ namespace noone.Controllers
             this._billReposatroy = billReposatroy;
         }
         [HttpGet("allBills")]
+        [Authorize(Roles=$"{Roles.ADMIN_ROLE},{Roles.USER_ROLE}")]
         public async Task<IActionResult> GetAllBills()
         {
             return Ok(await this._billReposatroy.GetAll());

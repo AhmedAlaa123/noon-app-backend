@@ -1,15 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace noone.ApplicationDTO.SubCategoryDto
+namespace noone.ApplicationDTO.SubCategoryDTO
 {
-    public class SubCategoryInfoDTO
+    public class SubCategoryUpdateDTO
     {
-
-        public Guid SubCategoryId { get; set; }
         [Required(ErrorMessage = "من فضلك ادخل اسم الفئة")]
         [MinLength(3, ErrorMessage = "يجب ان يكون الاسم اكثر من حرفين")]
         public string SubCategoryName { get; set; }
         [Required(ErrorMessage = "من فضلك ادخل الصورة")]
-        public string SubCategoryImage { get; set; }
+        public IFormFile? SubCategoryImage { get; set; }
     }
 }
