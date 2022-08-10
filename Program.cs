@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using noone.Helpers;
 using noone.Models;
+
 using noone.Reposatories;
 using noone.Reposatories.SubCategoryReposatory;
 using noone.Reposatories.CateegoryReposatory;
@@ -11,8 +12,11 @@ using noone.Reposatories.AuthenticationReposatory;
 using noone.Reposatories.DeliverCompanyReposatory;
 
 using System.Text;
+
+
 using noone.Reposatories.OrderReposatory;
 using noone.Reposatories.BillReposatory;
+
 
 namespace noone
 {
@@ -28,23 +32,28 @@ namespace noone
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            //add cors policy
-            builder.Services.AddCors(corsoptions =>
-            {
-                corsoptions.AddPolicy("Mypolicy", corsploicy =>
-                {
-                    corsploicy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-                });
-            });
+
+          
             //  Register Category Reposatory
             builder.Services.AddScoped<IReposatory<Category>, CategoryReposatory>();
             // Register DeliverComponyReposatory
             builder.Services.AddScoped<IReposatory<DeliverCompany>, DeliverComponyReposatory>();
+
+            builder.Services.AddScoped<IProductReposatory, ProductRepostory>();
+
+            //add custom sevices
+            builder.Services.AddScoped<IReposatory<SubCategory>, SubCategoryReposatory>();
+
+            //add custom sevices
+            builder.Services.AddScoped<IReposatory<Company>, ComponyReposatory>();
+
+
+
             //add custom sevices
             builder.Services.AddScoped<IReposatory<SubCategory>, SubCategoryReposatory>();
 
 
-          
+
 
             // add dbcontext to service
 
