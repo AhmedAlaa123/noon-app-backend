@@ -76,6 +76,8 @@ namespace noone.Controllers
                 sub.Image = pathfile;
               //  sub.Category_Id = createDTO.Category_Id;
 
+                
+              
                 bool isIsAdded=await reposatory.Insert(sub);
                 if (!isIsAdded)
                     return BadRequest("حدث خطأ اعد المحاوله");

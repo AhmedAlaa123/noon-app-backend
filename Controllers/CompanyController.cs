@@ -100,7 +100,7 @@ namespace noone.Controllers
                 Id = company.Id,
                 Name = company.Name,
                 ContactNumber = company.ContactNumber,
-                BrandImage=company.BrandImage
+                BrandImage = company.BrandImage
             };
 
             return Ok(Company);
@@ -130,23 +130,12 @@ namespace noone.Controllers
             if (!string.IsNullOrEmpty(await CheckEditIsAdminOrEmployee(token)))
                 return Unauthorized(await CheckEditIsAdminOrEmployee(token));
 
-            Company UpdatedCompany = new Company();
-            if(company.BrandImage!=null)
+            Company UpdatedCompany = new Company
             {
-                //upload image
-                string uploadimg = Path.Combine(env.WebRootPath, "images/CompaniesImages");
-                string uniqe = Guid.NewGuid().ToString() + "_" + company.BrandImage.FileName;
-                string pathfile = Path.Combine(uploadimg, uniqe);
-                using (var filestream = new FileStream(pathfile, FileMode.Create))
-                {
-                   company.BrandImage.CopyTo(filestream);
-                    filestream.Close();
-                }
-                UpdatedCompany.BrandImage = pathfile;
-            }
-            UpdatedCompany.Name = company.Name;
-            UpdatedCompany.ContactNumber = company.ContactNumber;
-
+                Name =Company.Name, 
+                ContactNumber = Company.ContactNumber,
+                BrandImage=Company.BrandImage
+            };
             bool isUpdated = await this._CompanyReposatory.Update(id, UpdatedCompany);
 
 
