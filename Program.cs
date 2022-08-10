@@ -4,6 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using noone.Helpers;
 using noone.Models;
+<<<<<<< HEAD
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> ProductController
 using noone.Reposatories;
 using noone.Reposatories.SubCategoryReposatory;
 using noone.Reposatories.CateegoryReposatory;
@@ -11,8 +16,14 @@ using noone.Reposatories.AuthenticationReposatory;
 using noone.Reposatories.DeliverCompanyReposatory;
 
 using System.Text;
+<<<<<<< HEAD
 using noone.Reposatories.OrderReposatory;
 using noone.Reposatories.BillReposatory;
+=======
+using noone.Reposatories.CompanyReposatory;
+using noone.Reposatories.ProductReposatory;
+>>>>>>> Stashed changes
+>>>>>>> ProductController
 
 namespace noone
 {
@@ -28,6 +39,30 @@ namespace noone
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+<<<<<<< Updated upstream
+=======
+            //add cors policy
+            builder.Services.AddCors(corsoptions =>
+            {
+                corsoptions.AddPolicy("Mypolicy", corsploicy =>
+                {
+                    corsploicy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                });
+            });
+            //  Register Category Reposatory
+            builder.Services.AddScoped<IReposatory<Category>, CategoryReposatory>();
+            // Register DeliverComponyReposatory
+            builder.Services.AddScoped<IReposatory<DeliverCompany>, DeliverComponyReposatory>();
+            builder.Services.AddScoped<IProductReposatory, ProductRepostory>();
+
+            //add custom sevices
+            builder.Services.AddScoped<IReposatory<SubCategory>, SubCategoryReposatory>();
+
+            //add custom sevices
+            builder.Services.AddScoped<IReposatory<Company>, ComponyReposatory>();
+
+
+>>>>>>> Stashed changes
 
             //  Register Category Reposatory
             builder.Services.AddScoped<IReposatory<Category>, CategoryReposatory>();
