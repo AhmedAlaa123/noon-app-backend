@@ -55,7 +55,7 @@ namespace noone.Controllers
         }
         //Add  SupCategories
         [HttpPost]
-        public async Task<IActionResult> AddSupcategory([F]SubCategoryCreateDTO createDTO)
+        public async Task<IActionResult> AddSupcategory([FromForm]SubCategoryCreateDTO createDTO)
         {
             SubCategory sub = new SubCategory();
             if(ModelState.IsValid)
