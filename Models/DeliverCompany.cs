@@ -12,7 +12,7 @@ namespace noone.Models
         [Required, MinLength(3)]
         public string Name { get; set; }
 
-        [Required, MinLength(11), RegularExpression("^[0-9]{11}$")]
+        [Required, StringLength(11), RegularExpression("^[0-9]{11}$")]
         public string ContactNumber { get; set; }
 
         [Required]
