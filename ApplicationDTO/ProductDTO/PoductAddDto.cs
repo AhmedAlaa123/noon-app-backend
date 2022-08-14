@@ -16,6 +16,6 @@ namespace noone.ApplicationDTO.ProductDTO
         public string SupCategoryName { get; set; }
         public List<String> ProductImages { get; set; } = new List<string>();
     
-
+      public  string token { get; set; }
     }
 }
