@@ -4,6 +4,7 @@ using noone.ApplicationDTO.categoryDTO;
 using noone.Reposatories;
 using noone.Models;
 using System.Collections.Generic;
+using noone.ApplicationDTO.SubCategoryDto;
 
 namespace noone.Controllers
 {
@@ -22,7 +23,23 @@ namespace noone.Controllers
             List<CategoryInfoDTO> categories = new List<CategoryInfoDTO>();
             foreach(var cate in await categoryReposatry.GetAll())
             {
-                categories.Add(new CategoryInfoDTO { Id=cate.Id,Name=cate.Name});
+                CategoryInfoDTO categoryInfo = new CategoryInfoDTO()
+                {
+                    Id = cate.Id,
+                    Name = cate.Name
+                };
+                categoryInfo.SubCategories = new List<SubCategoryInfoDTO>();
+                foreach(var subcate in cate.SubCategories)
+                {
+                    categoryInfo.SubCategories.Add(new SubCategoryInfoDTO
+                    {
+                        SubCategoryId = subcate.Id,
+                        SubCategoryName = subcate.Name,
+                        SubCategoryImage = $"https://{HttpContext.Request.Host.Value}/images/subCategoryImages/" + subcate.Image
+                    }); ;
+
+                }
+                categories.Add(categoryInfo);
             }
             return Ok(categories);
         }

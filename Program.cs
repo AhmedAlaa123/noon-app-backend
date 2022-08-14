@@ -105,7 +105,7 @@ namespace noone
                 
                 corsOptions.AddPolicy("NoonPolicy", corsPolicyBuilder =>
                 {
-                    corsPolicyBuilder.WithOrigins("*").AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                    corsPolicyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                 });
             });
 
@@ -116,6 +116,8 @@ namespace noone
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseStaticFiles();
+            app.UseRouting();
             app.UseCors("NoonPolicy");
             app.UseAuthentication();
             app.UseAuthorization();

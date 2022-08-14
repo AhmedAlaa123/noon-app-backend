@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using noone.ApplicationDTO.ApplicationUserDTO;
+using noone.Contstants;
 using noone.Reposatories.AuthenticationReposatory;
 
 
@@ -59,7 +60,7 @@ namespace noone.Controllers
         }
 
         [HttpPost("addRole")]
-        //[Authorize]
+        [Authorize(Roles = $"{Roles.ADMIN_ROLE}")]
         public async Task<IActionResult> AddRole(ApplicationUserAddRoleDTO userAddRoleDTO)
         {
             if (!ModelState.IsValid)
@@ -72,7 +73,8 @@ namespace noone.Controllers
 
             return Ok(userAddRoleDTO);
         }
-        [HttpDelete("removeUser/{deletedUserId}")]
+        [Authorize(Roles = $"{Roles.ADMIN_ROLE}")]
+        [HttpDelete("{deletedUserId}")]
         public async Task<IActionResult> RemoveUser([FromBody]string JWTToken,[FromRoute] string deletedUserId)
         {
             if (!ModelState.IsValid)
@@ -85,6 +87,7 @@ namespace noone.Controllers
 
             return Ok("تم حذف المستخدم بنجاح");
         }
+        [Authorize(Roles = $"{Roles.ADMIN_ROLE}")]
         [HttpDelete("removeRole")]
         public async Task<IActionResult> RemoveRole(ApplicationUserAddRoleDTO userAddRoleDTO)
         {
@@ -96,17 +99,14 @@ namespace noone.Controllers
             if (!string.IsNullOrEmpty(message))
                 return BadRequest(message);
 
-            return Ok("تم حذف الوظيفه من على المستخدم");
+            return Ok();
         }
 
-        [HttpGet("users/{userToken}")]
-        public async Task<ActionResult> GetAllUsers(string userToken)
+        [Authorize(Roles = $"{Roles.ADMIN_ROLE}")]
+        [HttpGet("users")]
+        public async Task<ActionResult> GetAllUsers()
         {
-            if (userToken == null)
-                return BadRequest("userToken Must not be null");
-            var users = await this._authenticationReposatory.GetAllUsers(userToken);
-            if (users is null)
-                return BadRequest("غير مسموح لك");
+            var users = await this._authenticationReposatory.GetAllUsers();
             return Ok(users);
         }
     }

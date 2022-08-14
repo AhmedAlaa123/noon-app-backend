@@ -19,7 +19,7 @@ namespace noone.Reposatories.AuthenticationReposatory
         // Remove User
         Task<string> RemoveUser(string JWTToken, string deletedUserId);
         //Get All Users That are not admin
-        Task<IEnumerable<ApplicationUserInfoDTO>> GetAllUsers(string JWTToken);
+        Task<IEnumerable<ApplicationUserInfoDTO>> GetAllUsers();
 
 
     }

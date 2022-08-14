@@ -11,5 +11,6 @@ namespace noone.ApplicationDTO.SubCategoryDto
         public string SubCategoryName { get; set; }
         [Required(ErrorMessage = "من فضلك ادخل الصورة")]
         public string SubCategoryImage { get; set; }
+
     }
 }

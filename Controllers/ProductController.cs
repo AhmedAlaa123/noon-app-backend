@@ -19,14 +19,14 @@ namespace noone.Controllers
             this.context= _context;
 
         }
-        [HttpGet]
+        [HttpGet("allpro")]
         public  IActionResult GetAllProd()
         {
             
          
             return Ok(product.GetAll());
         }
-        [HttpPost]
+        [HttpPost("addNewPro")]
         public  IActionResult AddProduct(PoductAddDto productDto)
         {
             Product newProduct=new Product();
@@ -55,7 +55,7 @@ namespace noone.Controllers
             return BadRequest("لم يتم الحذف");
         }
         [HttpPut("{Id}")]
-        public IActionResult Edit(Guid Id, PoductAddDto item)
+        public IActionResult Edit([FromRoute]Guid Id, PoductAddDto item)
         {
             if (ModelState.IsValid) {
                 if (product.Update(Id, item))

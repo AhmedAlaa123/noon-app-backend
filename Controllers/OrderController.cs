@@ -24,8 +24,8 @@ namespace noone.Controllers
       
         }
 
-        [HttpPost("AddNew")]
-        public async Task<IActionResult> AddNew(string token, OrderCreateDTO order)
+        [HttpPost("AddNew/{token}")]
+        public async Task<IActionResult> AddNew([FromRoute]string token, OrderCreateDTO order)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -117,9 +117,9 @@ namespace noone.Controllers
 
        // delete Order
        [HttpDelete("{orderId}")]
-        public async Task<IActionResult> CancelOrder([FromRoute] Guid id)
+        public async Task<IActionResult> CancelOrder([FromRoute] Guid orderId)
         {
-            if (id == null||! await this._order.Delete(id))
+            if (orderId == null||! await this._order.Delete(orderId))
                 return BadRequest("رقم الطلب غير صالح");
             return Ok("تم الغاء الطلب");
         }

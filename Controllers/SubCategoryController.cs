@@ -12,6 +12,7 @@ namespace noone.Controllers
     [ApiController]
     public class SubCategoryController : ControllerBase
     {
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(new string[] { });
         IReposatory<SubCategory> reposatory;
         IWebHostEnvironment env;
         public SubCategoryController(IReposatory<SubCategory> subCategory, IWebHostEnvironment env)
@@ -30,7 +31,8 @@ namespace noone.Controllers
                 SubCategoryInfoDTO infoDTO = new SubCategoryInfoDTO();
                 infoDTO.SubCategoryId = supcategory.Id;
                 infoDTO.SubCategoryName = supcategory.Name;
-                infoDTO.SubCategoryImage = supcategory.Image;
+                
+                infoDTO.SubCategoryImage = $"https://{HttpContext.Request.Host.Value}/images/subCategoryImages/"+supcategory.Image;
                 infoDTOs.Add(infoDTO);
             }
             
@@ -49,12 +51,12 @@ namespace noone.Controllers
             SubCategoryInfoDTO infoDTO = new SubCategoryInfoDTO();
             infoDTO.SubCategoryId= supcategory.Id;
             infoDTO.SubCategoryName = supcategory.Name;
-            infoDTO.SubCategoryImage = supcategory.Image;
+            infoDTO.SubCategoryImage = $"{HttpContext.Request.Host.Value}/images/subCategoryImages/" +supcategory.Image;
             return Ok(infoDTO);
 
         }
         //Add  SupCategories
-        [HttpPost]
+        [HttpPost("addNewSub")]
         public async Task<IActionResult> AddSupcategory([FromForm]SubCategoryCreateDTO createDTO)
         {
             SubCategory sub = new SubCategory();
@@ -63,7 +65,7 @@ namespace noone.Controllers
 
                
 
-                string uploadimg = Path.Combine(env.WebRootPath, "images/subCategoryImages");
+                string uploadimg = Path.Combine(this.HttpContext.Request.Host.Value, "images/subCategoryImages");
                 string uniqe = Guid.NewGuid().ToString() + "_" + createDTO.Image.FileName;
                 string pathfile = Path.Combine(uploadimg, uniqe);
                 using (var filestream = new FileStream(pathfile, FileMode.Create))
@@ -73,8 +75,8 @@ namespace noone.Controllers
                 }
                 sub.Name = createDTO.Name;
 
-                sub.Image = pathfile;
-              //  sub.Category_Id = createDTO.Category_Id;
+                sub.Image = uniqe;
+                sub.Category_Id = createDTO.Category_Id;
 
                 
               

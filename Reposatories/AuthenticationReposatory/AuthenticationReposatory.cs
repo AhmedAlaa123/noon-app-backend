@@ -178,11 +178,9 @@ namespace noone.Reposatories.AuthenticationReposatory
             return result.Succeeded? String.Empty:"لم يتم حذف المستخدم";
         }
         // This Method Used To Get All Users
-        public async Task<IEnumerable<ApplicationUserInfoDTO>> GetAllUsers(string JWTToken)
+        public async Task<IEnumerable<ApplicationUserInfoDTO>> GetAllUsers()
         {
-            string messgage = await IsAdmin(JWTToken);
-            if (!string.IsNullOrEmpty(messgage))
-                return null;
+           
 
            var users= this._userManger.Users.
                             ToList().
