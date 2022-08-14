@@ -23,10 +23,7 @@ namespace noone.Reposatories.ProductReposatory
                 product.Description=item.Description;
                 product.Price = item.Price;
                 JwtSecurityToken token =TokenConverter.ConvertToken(@"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJFYnJhaGVtIiwianRpIjoiMTVkYmFhODUtMGY0MS00YjU2LTg2NTctNjU2OGUzOTQyMTk2IiwiZW1haWwiOiJlZUBnbS5jb20iLCJyb2xlcyI6IlVTRVIiLCJleHAiOjE2NjI1OTUzODAsImlzcyI6Ik5vb25TZWN1cmVBcGkiLCJhdWQiOiJOb29uU2VjdXJlQXBpVXNlciJ9.MDGt7Jcnz79dR8fz_sU3NzMBq3Z2Xhu_cEEKV36tvSU");
-                List<Claim> list = new List<Claim>();
-                foreach (var claim in token.Claims)
-                    list.Add(claim);
-                string username = list[0].Value;
+               
                 product.UserId = context.Users.FirstOrDefault(c => c.UserName == username).Id;
                 product.CompanyId = context.Companies.FirstOrDefault(c => c.Name == item.CompanyName).Id;
                 product.Category_Id = context.Categories.FirstOrDefault(c => c.Name == item.CategoryName).Id;
