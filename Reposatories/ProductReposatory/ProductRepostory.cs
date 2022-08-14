@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using noone.ApplicationDTO.ProductDTO;
 using noone.Helpers;
 using noone.Models;
@@ -10,9 +11,22 @@ namespace noone.Reposatories.ProductReposatory
     public class ProductRepostory: IProductReposatory
     {
         readonly NoonEntities context;
-            public ProductRepostory(NoonEntities _context)
+        readonly IWebHostEnvironment webHostEnvironment;
+            public ProductRepostory(NoonEntities _context, IWebHostEnvironment _webHostEnvironment)
         {
             context= _context;
+            webHostEnvironment = _webHostEnvironment;
+        }
+        public void uploadImage(IFormFile image,Guid imageId)
+        {
+            string uploadFolder = Path.Combine(webHostEnvironment.WebRootPath, "images", "ProductsImages");
+            string imageName = imageId.ToString() + "_" + image.FileName;
+            string filePath = Path.Combine(uploadFolder, imageName);
+            using(var fileStream=new FileStream(filePath, FileMode.Create))
+            {
+                image.CopyToAsync(fileStream);
+                fileStream.Close();
+            }
         }
       public bool Insert(PoductAddDto item)
         {
@@ -22,12 +36,9 @@ namespace noone.Reposatories.ProductReposatory
                 product.Name=item.Name;
                 product.Description=item.Description;
                 product.Price = item.Price;
-                JwtSecurityToken token =TokenConverter.ConvertToken(@"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJFYnJhaGVtIiwianRpIjoiMTVkYmFhODUtMGY0MS00YjU2LTg2NTctNjU2OGUzOTQyMTk2IiwiZW1haWwiOiJlZUBnbS5jb20iLCJyb2xlcyI6IlVTRVIiLCJleHAiOjE2NjI1OTUzODAsImlzcyI6Ik5vb25TZWN1cmVBcGkiLCJhdWQiOiJOb29uU2VjdXJlQXBpVXNlciJ9.MDGt7Jcnz79dR8fz_sU3NzMBq3Z2Xhu_cEEKV36tvSU");
-                List<Claim> list = new List<Claim>();
-                foreach (var claim in token.Claims)
-                    list.Add(claim);
-                string username = list[0].Value;
-                product.UserId = context.Users.FirstOrDefault(c => c.UserName == username).Id;
+                var token =TokenConverter.ConvertToken(item.token);
+               
+                product.UserId = context.Users.FirstOrDefault(c => c.UserName == token.Subject).Id;
                 product.CompanyId = context.Companies.FirstOrDefault(c => c.Name == item.CompanyName).Id;
                 product.Category_Id = context.Categories.FirstOrDefault(c => c.Name == item.CategoryName).Id;
                 product.SucCategory_Id = context.SubCategories.FirstOrDefault(s => s.Name == item.SupCategoryName).Id;
@@ -35,9 +46,13 @@ namespace noone.Reposatories.ProductReposatory
                 context.Products.Add(product);
                 context.SaveChanges();
                 Product productAddImage = context.Products.FirstOrDefault(p => p.Name == item.Name);
-                foreach (string img in item.ProductImages)
-                    productAddImage.ProductImages.Add(new ProductImage() { Image = img, Product_Id = productAddImage.Id });
-                context.SaveChanges();
+                foreach (var img in item.ProductImages)
+                {
+                    Guid image_id = Guid.NewGuid();
+                    uploadImage(img, image_id);
+                    productAddImage.ProductImages.Add(new ProductImage() { Image = img.FileName, Product_Id = productAddImage.Id,Id=image_id });
+                
+                }  context.SaveChanges();
                 return true;
             }
             return false;
@@ -67,11 +82,19 @@ namespace noone.Reposatories.ProductReposatory
                     oldproduct.CompanyId = context.Companies.FirstOrDefault(c => c.Name == Item.CompanyName).Id;
                     oldproduct.SucCategory_Id = context.SubCategories.FirstOrDefault(c => c.Name == Item.SupCategoryName).Id;
                     oldproduct.Category_Id = context.Categories.FirstOrDefault(c => c.Name == Item.CategoryName).Id;
+                    foreach(var img in oldproduct.ProductImages)
+                    {
+                        context.ProductImages.Remove(img);
 
-                    oldproduct.ProductImages=new List<ProductImage>();
+                    }
                     context.SaveChanges();
                     foreach (var img in Item.ProductImages)
-                        oldproduct.ProductImages.Add(new ProductImage() { Image = img, Product_Id = Id });
+                    {
+                        Guid image_id = Guid.NewGuid();
+                        uploadImage(img, image_id);
+                        oldproduct.ProductImages.Add(new ProductImage() { Image = img.FileName, Product_Id = Id,Id=image_id });
+                       
+                    }
                     context.SaveChanges();
                     return true;
                 }

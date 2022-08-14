@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using noone.Helpers;
 using noone.Models;
-
 using noone.Reposatories;
 using noone.Reposatories.SubCategoryReposatory;
 using noone.Reposatories.CateegoryReposatory;
@@ -12,8 +11,6 @@ using noone.Reposatories.AuthenticationReposatory;
 using noone.Reposatories.DeliverCompanyReposatory;
 
 using System.Text;
-
-
 using noone.Reposatories.OrderReposatory;
 using noone.Reposatories.BillReposatory;
 using noone.Reposatories.ProductReposatory;
