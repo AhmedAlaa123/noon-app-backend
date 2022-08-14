@@ -12,8 +12,6 @@ namespace noone.ApplicationDTO.categoryDTO
         [Required, MinLength(3), uniqeCategoryName]
         public string Name { get; set; }
 
-       public List<string> productsname { get; set; } = new List<string>();
-
-        public List<string> subCategoryName { get; set; } = new List<string>();
+    
     }
 }
