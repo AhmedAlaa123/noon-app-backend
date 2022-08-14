@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using noone.ApplicationDTO.ProductDTO;
 using noone.Helpers;
 using noone.Models;
@@ -10,9 +11,22 @@ namespace noone.Reposatories.ProductReposatory
     public class ProductRepostory: IProductReposatory
     {
         readonly NoonEntities context;
-            public ProductRepostory(NoonEntities _context)
+        readonly IWebHostEnvironment webHostEnvironment;
+            public ProductRepostory(NoonEntities _context, IWebHostEnvironment _webHostEnvironment)
         {
             context= _context;
+            webHostEnvironment = _webHostEnvironment;
+        }
+        public void uploadImage(IFormFile image,Guid imageId)
+        {
+            string uploadFolder = Path.Combine(webHostEnvironment.WebRootPath, "images", "ProductsImages");
+            string imageName = imageId.ToString() + "_" + image.FileName;
+            string filePath = Path.Combine(uploadFolder, imageName);
+            using(var fileStream=new FileStream(filePath, FileMode.Create))
+            {
+                image.CopyToAsync(fileStream);
+                fileStream.Close();
+            }
         }
       public bool Insert(PoductAddDto item)
         {
@@ -32,9 +46,13 @@ namespace noone.Reposatories.ProductReposatory
                 context.Products.Add(product);
                 context.SaveChanges();
                 Product productAddImage = context.Products.FirstOrDefault(p => p.Name == item.Name);
-                foreach (string img in item.ProductImages)
-                    productAddImage.ProductImages.Add(new ProductImage() { Image = img, Product_Id = productAddImage.Id });
-                context.SaveChanges();
+                foreach (var img in item.ProductImages)
+                {
+                    Guid image_id = Guid.NewGuid();
+                    uploadImage(img, image_id);
+                    productAddImage.ProductImages.Add(new ProductImage() { Image = img.FileName, Product_Id = productAddImage.Id,Id=image_id });
+                
+                }  context.SaveChanges();
                 return true;
             }
             return false;
@@ -64,10 +82,19 @@ namespace noone.Reposatories.ProductReposatory
                     oldproduct.CompanyId = context.Companies.FirstOrDefault(c => c.Name == Item.CompanyName).Id;
                     oldproduct.SucCategory_Id = context.SubCategories.FirstOrDefault(c => c.Name == Item.SupCategoryName).Id;
                     oldproduct.Category_Id = context.Categories.FirstOrDefault(c => c.Name == Item.CategoryName).Id;
+                    foreach(var img in oldproduct.ProductImages)
+                    {
+                        context.ProductImages.Remove(img);
 
-                    
+                    }
+                    context.SaveChanges();
                     foreach (var img in Item.ProductImages)
-                        oldproduct.ProductImages.Add(new ProductImage() { Image = img, Product_Id = Id });
+                    {
+                        Guid image_id = Guid.NewGuid();
+                        uploadImage(img, image_id);
+                        oldproduct.ProductImages.Add(new ProductImage() { Image = img.FileName, Product_Id = Id,Id=image_id });
+                       
+                    }
                     context.SaveChanges();
                     return true;
                 }
