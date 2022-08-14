@@ -4,11 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using noone.Helpers;
 using noone.Models;
-<<<<<<<<< Temporary merge branch 1
-<<<<<<< Updated upstream
-=======
-=========
->>>>>>>>> Temporary merge branch 2
 using noone.Reposatories;
 using noone.Reposatories.SubCategoryReposatory;
 using noone.Reposatories.CateegoryReposatory;
@@ -16,14 +11,10 @@ using noone.Reposatories.AuthenticationReposatory;
 using noone.Reposatories.DeliverCompanyReposatory;
 
 using System.Text;
-<<<<<<<<< Temporary merge branch 1
-using noone.Reposatories.CompanyReposatory;
-using noone.Reposatories.ProductReposatory;
->>>>>>> Stashed changes
-=========
 using noone.Reposatories.OrderReposatory;
 using noone.Reposatories.BillReposatory;
->>>>>>>>> Temporary merge branch 2
+using noone.Reposatories.ProductReposatory;
+using noone.Reposatories.CompanyReposatory;
 
 namespace noone
 {
