@@ -23,16 +23,15 @@ namespace noone.Controllers
         public  IActionResult GetAllProd()
         {
             
-         
             return Ok(product.GetAll());
         }
         [HttpPost("addNewPro")]
-        public  IActionResult AddProduct(PoductAddDto productDto)
+        public  IActionResult AddProduct([FromForm]PoductAddDto productDto,[FromHeader]string token)
         {
             Product newProduct=new Product();
             if (ModelState.IsValid)
             {
-                product.Insert(productDto);
+                product.Insert(productDto,token);
                     return StatusCode(201, "تمت اضافة المنتج");
                
                 

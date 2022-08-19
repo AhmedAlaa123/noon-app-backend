@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using noone.Models;
 
@@ -11,9 +12,10 @@ using noone.Models;
 namespace noone.Migrations
 {
     [DbContext(typeof(NoonEntities))]
-    partial class NoonEntitiesModelSnapshot : ModelSnapshot
+    [Migration("20220818091601_update4")]
+    partial class update4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -368,15 +370,10 @@ namespace noone.Migrations
                     b.Property<Guid>("Category_Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CompanyId")
-                        .IsRequired()
+                    b.Property<Guid>("CompanyId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -638,7 +635,7 @@ namespace noone.Migrations
             modelBuilder.Entity("noone.Models.ProductImage", b =>
                 {
                     b.HasOne("noone.Models.Product", "Product")
-                        .WithMany()
+                        .WithMany("ProductImages")
                         .HasForeignKey("Product_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -746,6 +743,8 @@ namespace noone.Migrations
 
             modelBuilder.Entity("noone.Models.Product", b =>
                 {
+                    b.Navigation("ProductImages");
+
                     b.Navigation("ProductOrders");
 
                     b.Navigation("RelatedSaledProductOriginal");

@@ -1,4 +1,5 @@
-﻿using noone.ApplicationDTO.SubCategoryDto;
+﻿using noone.ApplicationDTO.ProductDTO;
+using noone.ApplicationDTO.SubCategoryDto;
 
 namespace noone.ApplicationDTO.categoryDTO
 {
@@ -7,5 +8,6 @@ namespace noone.ApplicationDTO.categoryDTO
         public Guid Id { get; set; }
         public string Name { get; set; }
         public List<SubCategoryInfoDTO> SubCategories { get; set; }
+        public List<ProductInfoDto> Products { get; set; }
     }
 }

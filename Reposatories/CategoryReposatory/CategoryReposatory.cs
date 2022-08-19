@@ -43,45 +43,27 @@ namespace noone.Reposatories.CateegoryReposatory
         }
       public async Task<bool> Update(Guid Id, Category category)
         {
-           
                 Category oldcategory = await context.Categories.FirstOrDefaultAsync(c => c.Id == Id);
-
                 if (oldcategory != null)
                 {
                     oldcategory.Name = category.Name;
-                await context.SaveChangesAsync();
-
-                return true;
+                    await context.SaveChangesAsync();
+                    return true;
                 }
                 return false;   
-                
-
-            
-         
-            }
+        }
 
        public async Task<Category> GetById(Guid Id)
         {
             //ListofCategoryDTO categoryDto = new ListofCategoryDTO();
            
-            Category category= await context.Categories.FirstOrDefaultAsync(c => c.Id == Id);
+            Category category= await context.Categories.Include(cate=>cate.SubCategories).Include(cate=>cate.Products).FirstOrDefaultAsync(c => c.Id == Id);
                
             return category;
         }
       public async Task<ICollection<Category>> GetAll()
         {
-         List<Category>categories=await context.Categories.Include(c=>c.Products).Include(c=>c.SubCategories).ToListAsync();
-         //List<ListofCategoryDTO> list = new List<ListofCategoryDTO>();
-         //   foreach(var category in categories)
-         //   {
-         //       ListofCategoryDTO tempCategory = new ListofCategoryDTO() { Name = category.Name, Id = category.Id };
-             
-         //   foreach(var product in category.Products)
-         //           tempCategory.productsname.Add(product.Name);
-         //   foreach (var subCategory in category.SubCategories)
-         //           tempCategory.subCategoryName.Add(subCategory.Name);
-         //  list.Add(tempCategory);
-         //   }
+            List<Category>categories=await context.Categories.Include(c=>c.Products).Include(c=>c.SubCategories).ToListAsync();
             return categories;
         }
     }

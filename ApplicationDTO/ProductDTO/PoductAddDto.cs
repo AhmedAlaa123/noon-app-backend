@@ -14,8 +14,8 @@ namespace noone.ApplicationDTO.ProductDTO
         public string CompanyName { get; set; }
         public string CategoryName { get; set; }
         public string SupCategoryName { get; set; }
-        public List<IFormFile> ProductImages { get; set; } = new List<IFormFile>();
+        public IFormFile ProductImage { get; set; }
     
-      public  string token { get; set; }
+      
     }
 }

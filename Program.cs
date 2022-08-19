@@ -48,7 +48,7 @@ namespace noone
             //add custom sevices
             builder.Services.AddScoped<IReposatory<SubCategory>, SubCategoryReposatory>();
             builder.Services.AddScoped<IReposatory<Bill>, BillReposatory>();
-
+            builder.Services.AddScoped<IReposatory<Order>,OrderReposatory>();
 
 
             // add dbcontext to service

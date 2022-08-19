@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using noone.ApplicationDTO.OrderDTO;
 using noone.Contstants;
@@ -23,9 +24,9 @@ namespace noone.Controllers
             this._order = orderReposatory;
       
         }
-
-        [HttpPost("AddNew/{token}")]
-        public async Task<IActionResult> AddNew([FromRoute]string token, OrderCreateDTO order)
+        //[Authorize]
+        [HttpPost("AddNew")]
+        public async Task<IActionResult> AddNew([FromHeader]string token, OrderCreateDTO order)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -38,12 +39,12 @@ namespace noone.Controllers
             var user = await this._useManger.FindByNameAsync(jwtSecurity.Subject);
             if (user is null)
                 return BadRequest("المستخدم غير مجود");
+            DateTime orderDate = DateTime.Now;
             Order ord = new Order
             {
-                DeliverDate = order.DeliverDate,
-                OrderDate = order.OrderDate,
+                DeliverDate = orderDate.AddDays(3),
+                OrderDate = orderDate,
                 UserId=user.Id
-                
 
             };
 
@@ -74,17 +75,17 @@ namespace noone.Controllers
         }
 
         //Edit Company 
+        [Authorize(Roles =$"{Roles.USER_ROLE},{Roles.EMPLOYEE_ROLE}")]
 
-
-        [HttpPut("edit/{token}/{id}")]
-        public async Task<IActionResult> UpdateOrder([FromRoute] string token, [FromBody] OrderCreateDTO ord, [FromRoute] Guid id)
+        [HttpPut("edit/{id}")]
+        public async Task<IActionResult> UpdateOrder([FromBody] OrderUpdateDTO ord, [FromRoute] Guid id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             // check if user is Admin Or Employee
-            string message = await CheckEditIsAdminOrEmployee(token);
-            if (!string.IsNullOrEmpty(message))
-                return Unauthorized(message);
+            //string message = await CheckEditIsAdminOrEmployee(token);
+            //if (!string.IsNullOrEmpty(message))
+            //    return Unauthorized(message);
 
             Order Updatedorder = new Order
             {

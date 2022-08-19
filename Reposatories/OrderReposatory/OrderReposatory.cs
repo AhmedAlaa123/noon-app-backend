@@ -36,7 +36,7 @@ namespace noone.Reposatories.OrderReposatory
                     await this._noonEntities.SaveChangesAsync();
                     Product product = await this._noonEntities.Products.FirstOrDefaultAsync(p => p.Id == pro.ProductId);
                     if (product != null)
-                        BillPrice += product.Price;
+                        BillPrice += product.Price* pro.Quantity;
                 }
 
                 // create Bill
