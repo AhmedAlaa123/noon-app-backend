@@ -16,7 +16,7 @@ using System.Text;
 
 using noone.Reposatories.OrderReposatory;
 using noone.Reposatories.BillReposatory;
-
+using noone.Reposatories.CompanyReposatory;
 
 namespace noone
 {
@@ -39,7 +39,7 @@ namespace noone
             // Register DeliverComponyReposatory
             builder.Services.AddScoped<IReposatory<DeliverCompany>, DeliverComponyReposatory>();
 
-            builder.Services.AddScoped<IProductReposatory, ProductRepostory>();
+            //builder.Services.AddScoped<IProductReposatory, ProductRepostory>();
 
             //add custom sevices
             builder.Services.AddScoped<IReposatory<SubCategory>, SubCategoryReposatory>();
@@ -116,7 +116,8 @@ namespace noone
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-     
+            app.UseStaticFiles();
+            app.UseCors("NoonPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
             

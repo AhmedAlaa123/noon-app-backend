@@ -49,7 +49,7 @@ namespace noone.Controllers
             {
                 Name = Company.Name,
                 ContactNumber = Company.ContactNumber,
-                BrandImage = pathfile
+                BrandImage = uniqe
             };
 
             bool isInserted = await this._CompanyReposatory.Insert(company);
@@ -81,6 +81,7 @@ namespace noone.Controllers
         public async Task<IActionResult> GetAllCompanies()
         {
             var companies = await this._CompanyReposatory.GetAll();
+            string baseUrl = $"https://{this.HttpContext.Request.Host}/images/CompaniesImages/";
             List<CompanyInfoDTO> companyInfoDTOs = new List<CompanyInfoDTO>();
             foreach(var company in companies)
             {
@@ -88,23 +89,25 @@ namespace noone.Controllers
                 {
                     Id = company.Id,
                     Name = company.Name,
-                    BrandImage = company.BrandImage,
+                    BrandImage = $"{baseUrl}{company.BrandImage}",
                     ContactNumber = company.ContactNumber
                 };
-                companyInfo.Products = new List<ProductInfoDTO>();
+                //companyInfo.Products = new List<ProductInfoDTO>();
 
-                foreach(var product in company.Products)
-                {
-                    companyInfo.Products.Add(
-                        new ProductInfoDTO
-                        {
-                            Id=product.Id,
-                            Name=product.Name,
-                            Price=product.Price,
-                            Description=product.Description
-                        }
-                        );
-                }
+                //foreach(var product in company.Products)
+                //{
+                //    companyInfo.Products.Add(
+                //        new ProductInfoDTO
+                //        {
+                //            Id=product.Id,
+                //            Name=product.Name,
+                //            Price=product.Price,
+                //            Description=product.Description
+                //        }
+                //        );
+                //}
+                companyInfoDTOs.Add(companyInfo);
+
             }
             return Ok(companyInfoDTOs);
         }
@@ -117,29 +120,30 @@ namespace noone.Controllers
             {
                 return NotFound("الشركه ليست موجوده");
             }
-
+            string baseUrl = $"https://{this.HttpContext.Request.Host}/images/CompaniesImages/";
             CompanyInfoDTO Company = new CompanyInfoDTO
             {
                 Id = company.Id,
                 Name = company.Name,
                 ContactNumber = company.ContactNumber,
-                BrandImage=company.BrandImage
+                BrandImage = $"{baseUrl}{company.BrandImage}",
+
             };
 
-            Company.Products = new List<ProductInfoDTO>();
+            //Company.Products = new List<ProductInfoDTO>();
 
-            foreach (var product in company.Products)
-            {
-                Company.Products.Add(
-                    new ProductInfoDTO
-                    {
-                        Id = product.Id,
-                        Name = product.Name,
-                        Price = product.Price,
-                        Description = product.Description
-                    }
-                    );
-            }
+            //foreach (var product in company.Products)
+            //{
+            //    Company.Products.Add(
+            //        new ProductInfoDTO
+            //        {
+            //            Id = product.Id,
+            //            Name = product.Name,
+            //            Price = product.Price,
+            //            Description = product.Description
+            //        }
+            //        );
+            //}
             return Ok(Company);
         }
 
@@ -158,7 +162,7 @@ namespace noone.Controllers
         //Edit Company 
 
 
-        [HttpPut("edit/{token}/{id}")]
+        [HttpPut("edit/{id}")]
         public async Task<IActionResult> UpdateCompany ([FromForm] CompanyUpdatedto company, [FromRoute] Guid id)
         {
             if (!ModelState.IsValid)
@@ -177,7 +181,7 @@ namespace noone.Controllers
                    company.BrandImage.CopyTo(filestream);
                     filestream.Close();
                 }
-                UpdatedCompany.BrandImage = pathfile;
+                UpdatedCompany.BrandImage = uniqe;
             }
             UpdatedCompany.Name = company.Name;
             UpdatedCompany.ContactNumber = company.ContactNumber;

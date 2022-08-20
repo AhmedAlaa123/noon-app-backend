@@ -10,7 +10,8 @@ namespace noone.ApplicationDTO.CompanyDTO
         public string Name { get; set; }
         public string ContactNumber { get; set; }
         public string BrandImage { get; set; }
-        public List<ProductInfoDTO> Products { get; set; }
+
+        //public List<ProductInfoDTO> Products { get; set; }
 
     }
 }
