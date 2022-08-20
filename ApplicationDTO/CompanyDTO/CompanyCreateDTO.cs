@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using noone.CustomAttributes;
+using System.ComponentModel.DataAnnotations;
 using noone.CustomAttributes;
 
 namespace noone.ApplicationDTO.CompanyDTO

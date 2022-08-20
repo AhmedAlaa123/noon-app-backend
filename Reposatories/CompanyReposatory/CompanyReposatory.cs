@@ -30,7 +30,7 @@ namespace noone.Reposatories.CompanyReposatory
 
         public async Task<ICollection<Company>> GetAll()
         {
-            return await this._noonEntities.Companies.ToListAsync();
+            return await this._noonEntities.Companies.Include(comp=>comp.Products).ToListAsync();
         }
 
         public async Task<Company> GetById(Guid Id)

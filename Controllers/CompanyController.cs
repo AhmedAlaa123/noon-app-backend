@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using noone.ApplicationDTO.CompanyDTO;
+using noone.ApplicationDTO.ProductDTO;
 using noone.Contstants;
 using noone.Helpers;
 using noone.Models;
 using noone.Reposatories;
+using System.Globalization;
 
 namespace noone.Controllers
 {
@@ -24,15 +27,15 @@ namespace noone.Controllers
             this.env = env;
         }
 
-
+        //[Authorize]
         [HttpPost("AddNew")]
-        public async Task<IActionResult> AddNew(string token,[FromForm] CompanyCreateDTO Company)
+        public async Task<IActionResult> AddNew([FromForm] CompanyCreateDTO Company)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             // check if user is Admin Or Employee
-            if (!string.IsNullOrEmpty(await CheckUseIsAdminOrEmployee(token)))
-                return Unauthorized(await CheckUseIsAdminOrEmployee(token));
+            //if (!string.IsNullOrEmpty(await CheckUseIsAdminOrEmployee(token)))
+            //    return Unauthorized(await CheckUseIsAdminOrEmployee(token));
             //upload image
             string uploadimg = Path.Combine(env.WebRootPath, "images/CompaniesImages");
             string uniqe = Guid.NewGuid().ToString() + "_" + Company.BrandImage.FileName; ;
@@ -61,29 +64,49 @@ namespace noone.Controllers
         }
 
         [HttpDelete("{companyId}")]
-        public async Task<IActionResult> DeleteCompany([FromRoute] Guid companyId, [FromBody] string Token)
+        public async Task<IActionResult> DeleteCompany([FromRoute] Guid companyId)
         {
-            if (string.IsNullOrWhiteSpace(Token) || string.IsNullOrEmpty(companyId.ToString()))
-            {
-                return BadRequest("الرقم التعريفى للشركه او بيانات المستخدم خطأ");
-            }
-
-            // check if user is authorized
-            if (!string.IsNullOrEmpty(await CheckUseIsAdminOrEmployee(Token)))
-                return Unauthorized(await CheckUseIsAdminOrEmployee(Token));
+           
+           
 
             // delete company
             bool isDeleted = await this._CompanyReposatory.Delete(Id: companyId);
 
             if (!isDeleted)
                 return BadRequest("حدث خطأ لم يتم حذف الشركه");
-            return Ok("تم حذف الشركه");
+            return Ok();
         }
 
         [HttpGet("allCompanies")]
         public async Task<IActionResult> GetAllCompanies()
         {
-            return Ok(await this._CompanyReposatory.GetAll());
+            var companies = await this._CompanyReposatory.GetAll();
+            List<CompanyInfoDTO> companyInfoDTOs = new List<CompanyInfoDTO>();
+            foreach(var company in companies)
+            {
+                CompanyInfoDTO companyInfo = new CompanyInfoDTO
+                {
+                    Id = company.Id,
+                    Name = company.Name,
+                    BrandImage = company.BrandImage,
+                    ContactNumber = company.ContactNumber
+                };
+                companyInfo.Products = new List<ProductInfoDTO>();
+
+                foreach(var product in company.Products)
+                {
+                    companyInfo.Products.Add(
+                        new ProductInfoDTO
+                        {
+                            Id=product.Id,
+                            Name=product.Name,
+                            Price=product.Price,
+                            Description=product.Description
+                        }
+                        );
+                }
+            }
+            return Ok(companyInfoDTOs);
         }
 
         [HttpGet("allCompanies/{companyId}")]
@@ -103,6 +126,20 @@ namespace noone.Controllers
                 BrandImage=company.BrandImage
             };
 
+            Company.Products = new List<ProductInfoDTO>();
+
+            foreach (var product in company.Products)
+            {
+                Company.Products.Add(
+                    new ProductInfoDTO
+                    {
+                        Id = product.Id,
+                        Name = product.Name,
+                        Price = product.Price,
+                        Description = product.Description
+                    }
+                    );
+            }
             return Ok(Company);
         }
 
@@ -122,14 +159,12 @@ namespace noone.Controllers
 
 
         [HttpPut("edit/{token}/{id}")]
-        public async Task<IActionResult> UpdateCompany([FromRoute] string token, [FromForm] CompanyUpdatedto company, [FromRoute] Guid id)
+        public async Task<IActionResult> UpdateCompany ([FromForm] CompanyUpdatedto company, [FromRoute] Guid id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             // check if user is Admin Or Employee
-            if (!string.IsNullOrEmpty(await CheckEditIsAdminOrEmployee(token)))
-                return Unauthorized(await CheckEditIsAdminOrEmployee(token));
-
+        
             Company UpdatedCompany = new Company();
             if(company.BrandImage!=null)
             {
