@@ -214,7 +214,9 @@ namespace noone.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
@@ -317,7 +319,8 @@ namespace noone.Migrations
 
                     b.Property<string>("ContactNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -334,7 +337,7 @@ namespace noone.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("DeliverCompany_Id")
+                    b.Property<Guid?>("DeliverCompany_Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DeliverDate")
@@ -365,10 +368,15 @@ namespace noone.Migrations
                     b.Property<Guid>("Category_Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CompanyId")
+                    b.Property<Guid?>("CompanyId")
+                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -467,10 +475,11 @@ namespace noone.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("Category_Id")
+                    b.Property<Guid?>("Category_Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Image")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -578,9 +587,7 @@ namespace noone.Migrations
                 {
                     b.HasOne("noone.Models.DeliverCompany", "DeliverCompany")
                         .WithMany("Orders")
-                        .HasForeignKey("DeliverCompany_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DeliverCompany_Id");
 
                     b.HasOne("noone.Models.ApplicationUser", "User")
                         .WithMany("Orders")
@@ -631,7 +638,7 @@ namespace noone.Migrations
             modelBuilder.Entity("noone.Models.ProductImage", b =>
                 {
                     b.HasOne("noone.Models.Product", "Product")
-                        .WithMany("ProductImages")
+                        .WithMany()
                         .HasForeignKey("Product_Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -681,9 +688,7 @@ namespace noone.Migrations
                 {
                     b.HasOne("noone.Models.Category", "Category")
                         .WithMany("SubCategories")
-                        .HasForeignKey("Category_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Category_Id");
 
                     b.Navigation("Category");
                 });
@@ -741,8 +746,6 @@ namespace noone.Migrations
 
             modelBuilder.Entity("noone.Models.Product", b =>
                 {
-                    b.Navigation("ProductImages");
-
                     b.Navigation("ProductOrders");
 
                     b.Navigation("RelatedSaledProductOriginal");

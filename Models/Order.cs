@@ -22,7 +22,7 @@ namespace noone.Models
         public ApplicationUser User { get; set; }
 
         [ForeignKey("DeliverCompany")]
-        public Guid DeliverCompany_Id { get; set; }
+        public Guid? DeliverCompany_Id { get; set; }
         public DeliverCompany DeliverCompany { get; set; }
 
         // Products in this order

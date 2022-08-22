@@ -21,7 +21,7 @@ namespace noone.Models
         public ApplicationUser User { get; set; }
 
         [ForeignKey("Company")]
-        public Guid CompanyId { get; set; }
+        public Guid? CompanyId { get; set; }
         public Company Company { get; set; }
 
         [ForeignKey("Category")]
@@ -33,7 +33,8 @@ namespace noone.Models
 
         public SubCategory SucCategory { get; set; }
 
-        public ICollection<ProductImage> ProductImages { get; set; }
+        public  string Image { get; set; }
+       // public ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
         public ICollection<ProductOrder> ProductOrders { get; set; }
         public ICollection<UserProductRate> UserProductRates { get; set; }
 
