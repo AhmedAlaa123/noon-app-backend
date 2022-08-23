@@ -17,14 +17,14 @@ namespace noone.Reposatories.ProductReposatory
             context= _context;
             webHostEnvironment = _webHostEnvironment;
         }
-        public void uploadImage(IFormFile image,Guid imageId)
+        public async void uploadImage(IFormFile image,Guid imageId)
         {
             string uploadFolder = Path.Combine(webHostEnvironment.WebRootPath, "images", "ProductsImages");
             string imageName = imageId.ToString() + "_" + image.FileName;
             string filePath = Path.Combine(uploadFolder, imageName);
             using(var fileStream=new FileStream(filePath, FileMode.Create))
             {
-                image.CopyToAsync(fileStream);
+               await image.CopyToAsync(fileStream);
                 fileStream.Close();
             }
         }
@@ -37,18 +37,25 @@ namespace noone.Reposatories.ProductReposatory
                 product.Description=item.Description;
                 product.Price = item.Price;
                 var tokenData =TokenConverter.ConvertToken(token);
+
+                //product.CompanyId = context.Companies.FirstOrDefault(c => c.Name == item.CompanyName).Id;
+                //product.Category_Id = context.Categories.FirstOrDefault(c => c.Name == item.CategoryName).Id;
+                //product.SucCategory_Id = context.SubCategories.FirstOrDefault(s => s.Name == item.SupCategoryName).Id;
+
                 product.UserId = context.Users.FirstOrDefault(c => c.UserName == tokenData.Subject).Id;
-                product.CompanyId = context.Companies.FirstOrDefault(c => c.Name == item.CompanyName).Id;
-                product.Category_Id = context.Categories.FirstOrDefault(c => c.Name == item.CategoryName).Id;
-                product.SucCategory_Id = context.SubCategories.FirstOrDefault(s => s.Name == item.SupCategoryName).Id;
+                product.CompanyId = item.CompanyId;
+                product.Category_Id = item.CategoryId;
+                product.SucCategory_Id = item.SupCategoryId;
+                
                 Guid image_id = Guid.NewGuid();
+       
                 uploadImage(item.ProductImage, image_id);
                 product.Image = image_id.ToString() + "_" + item.ProductImage.FileName;
+       
                 context.Products.Add(product);
                 context.SaveChanges();
+                
                 //Product productAddImage = context.Products.FirstOrDefault(p => p.Name == item.Name);
-            
-
                 //foreach (var img in item.ProductImages)
                 //{
                  
@@ -81,9 +88,12 @@ namespace noone.Reposatories.ProductReposatory
                     oldproduct.Description = Item.Description;
                 
                     oldproduct.Price = Item.Price;
-                    oldproduct.CompanyId = context.Companies.FirstOrDefault(c => c.Name == Item.CompanyName).Id;
-                    oldproduct.SucCategory_Id = context.SubCategories.FirstOrDefault(c => c.Name == Item.SupCategoryName).Id;
-                    oldproduct.Category_Id = context.Categories.FirstOrDefault(c => c.Name == Item.CategoryName).Id;
+                    //oldproduct.CompanyId = context.Companies.FirstOrDefault(c => c.Name == Item.CompanyName).Id;
+                    //oldproduct.SucCategory_Id = context.SubCategories.FirstOrDefault(c => c.Name == Item.SupCategoryName).Id;
+                    //oldproduct.Category_Id = context.Categories.FirstOrDefault(c => c.Name == Item.CategoryName).Id;
+                    oldproduct.CompanyId = Item.CompanyId;
+                    oldproduct.SucCategory_Id = Item.SupCategoryId;
+                    oldproduct.Category_Id = Item.CategoryId;
                     Guid image_id = Guid.NewGuid();
                     oldproduct.Image = image_id.ToString() + "_" + Item.ProductImage.FileName;
                     uploadImage(Item.ProductImage, image_id);
@@ -120,6 +130,9 @@ namespace noone.Reposatories.ProductReposatory
             temp.Description = product.Description;
             temp.Price = product.Price;
             temp.CompanyName = context.Companies.FirstOrDefault(c => c.Id == product.CompanyId).Name;
+            temp.CategoryId = product.Category_Id;
+            temp.SubCategoryId = product.SucCategory_Id;
+            temp.ProductImage = product.Image;
 
             //foreach (ProductImage img in product.ProductImages)
             //{
@@ -142,6 +155,8 @@ namespace noone.Reposatories.ProductReposatory
                 temp.ProductImage = product.Image;
                 //temp.CompanyName = context.Companies.FirstOrDefault(c => c.Id == product.CompanyId).Name;
                 temp.CompanyName = product.Company.Name;
+                temp.CategoryId = product.Category_Id;
+                temp.SubCategoryId = product.SucCategory_Id;
 
 
                 //foreach (ProductImage img in product.ProductImages)

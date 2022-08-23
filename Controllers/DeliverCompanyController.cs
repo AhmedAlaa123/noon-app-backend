@@ -24,7 +24,7 @@ namespace noone.Controllers
 
 
         [HttpPost("AddNew")]
-        public async Task<IActionResult> AddNew(string token,DeliverCompanyCreateDTO deliverCompany)
+        public async Task<IActionResult> AddNew([FromHeader]string token,DeliverCompanyCreateDTO deliverCompany)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -50,23 +50,23 @@ namespace noone.Controllers
         }
 
         [HttpDelete("{companyId}")]
-        public async Task<IActionResult> DeleteDeliverCompany([FromRoute] Guid companyId,[FromBody]string Token)
+        public async Task<IActionResult> DeleteDeliverCompany([FromRoute] Guid companyId)
         {
-            if(string.IsNullOrWhiteSpace(Token)||string.IsNullOrEmpty(companyId.ToString()))
-            {
-                return BadRequest("الرقم التعريفى للشركه او بيانات المستخدم خطأ");
-            }
+            //if(string.IsNullOrWhiteSpace(Token)||string.IsNullOrEmpty(companyId.ToString()))
+            //{
+            //    return BadRequest("الرقم التعريفى للشركه او بيانات المستخدم خطأ");
+            //}
 
-            // check if user is authorized
-            if (!string.IsNullOrEmpty(await CheckUseIsAdminOrEmployee(Token)))
-                return Unauthorized(await CheckUseIsAdminOrEmployee(Token));
+            //// check if user is authorized
+            //if (!string.IsNullOrEmpty(await CheckUseIsAdminOrEmployee(Token)))
+            //    return Unauthorized(await CheckUseIsAdminOrEmployee(Token));
 
             // delete company
             bool isDeleted=await this._deliverCompanyReposatory.Delete(Id:companyId);
 
             if (!isDeleted)
                 return BadRequest("حدث خطأ لم يتم حذف الشركه");
-            return Ok("تم حذف الشركه");
+            return Ok();
         }
 
         [HttpGet("allDeliverCompanies")]

@@ -37,13 +37,13 @@ namespace noone.Reposatories.SubCategoryReposatory
 
         public async Task<ICollection<SubCategory>> GetAll()
         {
-            return await this.noonEntities.SubCategories.ToListAsync();
+            return await this.noonEntities.SubCategories.Include(sub=>sub.Products).ToListAsync();
 
         }
 
         public async Task<SubCategory> GetById(Guid Id)
         {
-            return await this.noonEntities.SubCategories.FirstOrDefaultAsync(emp => emp.Id == Id);
+            return await this.noonEntities.SubCategories.Include(sub=>sub.Products).FirstOrDefaultAsync(emp => emp.Id == Id);
         }
 
         public async Task<bool> Insert(SubCategory item)

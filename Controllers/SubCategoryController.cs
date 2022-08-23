@@ -5,6 +5,7 @@ using noone.Reposatories;
 using noone.Reposatories.SubCategoryReposatory;
 using noone.ApplicationDTO.SubCategoryDto;
 using noone.ApplicationDTO.SubCategoryDTO;
+using noone.ApplicationDTO.ProductDTO;
 
 namespace noone.Controllers
 {
@@ -25,14 +26,26 @@ namespace noone.Controllers
         public async Task<IActionResult> GetallSupcategory()
         {
             var supcategories = await reposatory.GetAll();
-            List<SubCategoryInfoDTO> infoDTOs = new List<SubCategoryInfoDTO>();
+            List<SubCategoryDetailsDTO> infoDTOs = new List<SubCategoryDetailsDTO>();
             foreach (var supcategory in supcategories)
             {
-                SubCategoryInfoDTO infoDTO = new SubCategoryInfoDTO();
+                SubCategoryDetailsDTO infoDTO = new SubCategoryDetailsDTO();
                 infoDTO.SubCategoryId = supcategory.Id;
                 infoDTO.SubCategoryName = supcategory.Name;
-                
+                infoDTO.Products = new List<ApplicationDTO.ProductDTO.ProductInfoDto>();
                 infoDTO.SubCategoryImage = $"https://{HttpContext.Request.Host.Value}/images/subCategoryImages/"+supcategory.Image;
+                foreach(var prop in supcategory.Products)
+                {
+                    infoDTO.Products.Add(new ProductInfoDto
+                    {
+                        Name = prop.Name,
+                        Price = prop.Price,
+                        ProductImage = $"https://{HttpContext.Request.Host.Value}/images/ProductsImages/{prop.Image}",
+                        Id =prop.Id
+                        
+                    });
+
+                }
                 infoDTOs.Add(infoDTO);
             }
             
@@ -48,10 +61,24 @@ namespace noone.Controllers
             {
             return BadRequest("ID Not Found");
             }
-            SubCategoryInfoDTO infoDTO = new SubCategoryInfoDTO();
+            SubCategoryDetailsDTO infoDTO = new SubCategoryDetailsDTO();
             infoDTO.SubCategoryId= supcategory.Id;
             infoDTO.SubCategoryName = supcategory.Name;
             infoDTO.SubCategoryImage = $"{HttpContext.Request.Host.Value}/images/subCategoryImages/" +supcategory.Image;
+            infoDTO.Products = new List<ProductInfoDto>();
+            foreach (var prop in supcategory.Products)
+            {
+                infoDTO.Products.Add(new ProductInfoDto
+                {
+                    Name = prop.Name,
+                    Price = prop.Price,
+                    ProductImage = $"https://{HttpContext.Request.Host.Value}/images/ProductsImages/{prop.Image}",
+                    Id = prop.Id
+
+                });
+
+            }
+
             return Ok(infoDTO);
 
         }
@@ -65,7 +92,7 @@ namespace noone.Controllers
 
                
 
-                string uploadimg = Path.Combine(this.HttpContext.Request.Host.Value, "images/subCategoryImages");
+                string uploadimg = Path.Combine(env.WebRootPath, "images/subCategoryImages");
                 string uniqe = Guid.NewGuid().ToString() + "_" + createDTO.Image.FileName;
                 string pathfile = Path.Combine(uploadimg, uniqe);
                 using (var filestream = new FileStream(pathfile, FileMode.Create))

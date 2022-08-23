@@ -11,9 +11,9 @@ namespace noone.ApplicationDTO.ProductDTO
         public double Price { get; set; }
         public string Description { get; set; }
        
-        public string CompanyName { get; set; }
-        public string CategoryName { get; set; }
-        public string SupCategoryName { get; set; }
+        public Guid CompanyId { get; set; }
+        public Guid CategoryId { get; set; }
+        public Guid SupCategoryId { get; set; }
         public IFormFile ProductImage { get; set; }
     
       

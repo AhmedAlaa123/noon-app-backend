@@ -22,8 +22,13 @@ namespace noone.Controllers
         [HttpGet("allpro")]
         public  IActionResult GetAllProd()
         {
-            
-            return Ok(product.GetAll());
+            var products = product.GetAll();
+            foreach(var pro in products)
+            {
+             
+                pro.ProductImage = $"https://{HttpContext.Request.Host.Value}/images/ProductsImages/{pro.ProductImage}";
+            }
+            return Ok(products);
         }
         [HttpPost("addNewPro")]
         public  IActionResult AddProduct([FromForm]PoductAddDto productDto,[FromHeader]string token)
@@ -32,9 +37,7 @@ namespace noone.Controllers
             if (ModelState.IsValid)
             {
                 product.Insert(productDto,token);
-                    return StatusCode(201, "تمت اضافة المنتج");
-               
-                
+                    return StatusCode(201);  
             }
             return BadRequest(ModelState);
 
@@ -42,8 +45,11 @@ namespace noone.Controllers
         [HttpGet("{Id}")]
         public IActionResult getById(Guid Id)
         {
-            if (product.GetById(Id) != null)
-                return Ok(product.GetById(Id));
+            if (product.GetById(Id) != null) {
+                var pro = product.GetById(Id);
+                pro.ProductImage = $"https://{HttpContext.Request.Host.Value}/images/ProductsImages/{pro.ProductImage}";
+                return Ok(pro);
+            }
             return BadRequest(ModelState);
         }
         [HttpDelete("{Id}")]

@@ -57,9 +57,7 @@ namespace noone.Controllers
 
             // create Bill
 
-            return Ok(ord);
-
-
+            return Ok("تم ان  شاء الله الاوردر");
 
         }
         private async Task<string> CheckUseIsAdminOrEmployee(string Token)
@@ -98,7 +96,7 @@ namespace noone.Controllers
 
 
             if (!isUpdated)
-                return BadRequest("لم يتم التعديل اعد المحاوله");
+                return BadRequest();
 
             return Ok(ord);
 

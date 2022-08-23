@@ -13,9 +13,6 @@ namespace noone.ApplicationDTO.OrderDTO
         //[Required(ErrorMessage ="تاريخ الطلب مطلوب")]
         //[DataType(DataType.DateTime)]
         //public string OrderDate { get; set; }
-        
-        public List<ProductOrderCreateDTO> Products { get; set; }
-
-
+        public List<ProductOrderCreateDTO> Products { get; set; } = new List<ProductOrderCreateDTO>();
     }
 }
