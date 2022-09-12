@@ -52,6 +52,7 @@ namespace noone.Controllers
 
             if(!authentcationModel.IsAuthenticated)
             {
+
                 return BadRequest(authentcationModel.Message);
             }
 
